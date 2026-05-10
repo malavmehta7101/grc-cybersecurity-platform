@@ -243,9 +243,9 @@ Update these arrays to tailor the platform to your organization.
 **[Your Name]**  
 Cybersecurity Analyst | Cloud Developer | GRC Specialist
 
-- 🔗 LinkedIn: [linkedin.com/in/yourprofile](https://linkedin.com/in/yourprofile)
-- 💻 GitHub: [github.com/yourusername](https://github.com/yourusername)
-- 📧 Email: your@email.com
+- 🔗 LinkedIn: [linkedin.com/in/yourprofile]www.linkedin.com/in/malavmehta-dev
+- 💻 GitHub: [github.com/yourusername](https://github.com/malavmehta7101)
+- 📧 Email: malav.mehta@rocketmail.com/mehtamalav59@gmail.com
 
 ---
 
