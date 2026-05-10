@@ -240,7 +240,7 @@ Update these arrays to tailor the platform to your organization.
 
 ## 👤 Author
 
-**[Your Name]**  
+**Malav Mehta**  
 Cybersecurity Analyst | Cloud Developer | GRC Specialist
 
 - 🔗 LinkedIn: [linkedin.com/in/yourprofile]www.linkedin.com/in/malavmehta-dev
