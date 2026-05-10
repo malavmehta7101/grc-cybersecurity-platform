@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRC Cybersecurity Platform</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --tp:#1A1917;--ts:#5F5E5A;--tt:#888780;
+  --bp:#FFFFFF;--bs:#F5F3EE;
+  --bd3:#E2E0DA;--bd2:#D0CEC7;--bd1:#B4B2A9;
+  --td:#A32D2D;--bd:#FCEBEB;
+  --tw:#854F0B;--bw:#FAEEDA;
+  --ti:#185FA5;--bi:#E3EEFB;
+  --tg:#0F6E56;--bg:#E1F5EE;
+  --fs:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --fm:'SF Mono','Fira Code',monospace;
+  --r4:4px;--r6:6px;--r8:8px;
+}
+@media(prefers-color-scheme:dark){:root{
+  --tp:#E8E6E0;--ts:#B4B2A9;--tt:#888780;
+  --bp:#1C1B19;--bs:#252320;
+  --bd3:#333130;--bd2:#3D3C39;--bd1:#5F5E5A;
+  --td:#F48771;--bd:#3D1A1A;
+  --tw:#F0B862;--bw:#3D2C12;
+  --ti:#7BB3F0;--bi:#1B2E4D;
+  --tg:#6BC88A;--bg:#1B3826;
+}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fs);background:var(--bp);color:var(--tp);line-height:1.5}
+.wrap{max-width:1100px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+header{border-bottom:0.5px solid var(--bd3);padding-bottom:1rem;margin-bottom:1.5rem}
+.header-top{display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem}
+.header-top h1{font-size:18px;font-weight:500;color:var(--tp)}
+.header-top span{font-size:11px;background:var(--bi);color:var(--ti);padding:2px 8px;border-radius:var(--r4);font-weight:500}
+header p{font-size:12px;color:var(--ts)}
+.tab-nav{display:flex;gap:2px;border-bottom:0.5px solid var(--bd3);margin-bottom:1.5rem;flex-wrap:wrap}
+.tab-btn{padding:8px 14px;font-size:13px;color:var(--ts);background:transparent;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px;display:flex;align-items:center;gap:6px}
+.tab-btn.on{color:var(--tp);font-weight:500;border-bottom-color:var(--tp)}
+.tab-btn:hover:not(.on){color:var(--tp)}
+.panel{display:none}.panel.on{display:block}
+.sub-nav{display:flex;gap:4px;margin-bottom:1.25rem;flex-wrap:wrap}
+.sub-btn{padding:5px 12px;font-size:12px;border:0.5px solid var(--bd2);border-radius:var(--r6);background:transparent;cursor:pointer;color:var(--ts)}
+.sub-btn.on{background:var(--bs);color:var(--tp);font-weight:500;border-color:var(--bd1)}
+.sub-btn:hover:not(.on){background:var(--bs)}
+.sub-panel{display:none}.sub-panel.on{display:block}
+.sec-title{font-size:15px;font-weight:500;color:var(--tp);margin-bottom:3px}
+.sec-sub{font-size:12px;color:var(--ts);margin-bottom:1.25rem}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem}
+@media(max-width:600px){.mgrid{grid-template-columns:repeat(2,1fr)}}
+.mcard{background:var(--bs);border-radius:var(--r6);padding:.875rem}
+.mlb{font-size:11px;color:var(--ts);margin-bottom:4px}
+.mvl{font-size:22px;font-weight:500;color:var(--tp)}
+.mvl.cr{color:var(--td)}.mvl.hi{color:var(--tw)}.mvl.ok{color:var(--tg)}.mvl.in{color:var(--ti)}
+.badge{display:inline-block;padding:2px 8px;border-radius:var(--r4);font-size:11px;font-weight:500}
+.b-c{background:var(--bd);color:var(--td)}.b-h{background:var(--bw);color:var(--tw)}
+.b-m{background:var(--bi);color:var(--ti)}.b-l{background:var(--bg);color:var(--tg)}
+.b-ok{background:var(--bg);color:var(--tg)}.b-pt{background:var(--bw);color:var(--tw)}
+.b-nc{background:var(--bd);color:var(--td)}.b-na{background:var(--bs);color:var(--ts)}
+.b-pl{background:var(--bi);color:var(--ti)}.b-ni{background:var(--bd);color:var(--td)}
+.b-mit{background:var(--bi);color:var(--ti)}.b-tr{background:var(--bw);color:var(--tw)}
+.b-ac{background:var(--bs);color:var(--ts)}.b-on{background:var(--bg);color:var(--tg)}
+.b-ar{background:var(--bw);color:var(--tw)}.b-of{background:var(--bd);color:var(--td)}
+.b-risk{background:var(--bi);color:var(--ti)}.b-audit{background:var(--bw);color:var(--tw)}
+.b-both{background:var(--bd);color:var(--td)}
+.frow{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.frow span{font-size:12px;color:var(--ts)}
+.fbtn{padding:4px 12px;font-size:12px;border:0.5px solid var(--bd2);border-radius:var(--r6);background:transparent;cursor:pointer;color:var(--ts)}
+.fbtn.on{background:var(--bs);color:var(--tp);font-weight:500;border-color:var(--bd1)}
+.twrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-size:11px;font-weight:500;color:var(--ts);text-align:left;padding:7px 8px;border-bottom:0.5px solid var(--bd3);white-space:nowrap}
+td{padding:7px 8px;border-bottom:0.5px solid var(--bd3);color:var(--tp);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.ptrack{background:var(--bs);border-radius:3px;overflow:hidden}
+.pfill{border-radius:3px;transition:width .5s}
+.matrix{display:inline-grid;grid-template-columns:28px repeat(5,48px);gap:2px}
+.mc{height:44px;border-radius:var(--r4);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+.ml{display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--tt)}
+.mc-l{background:var(--bg);color:var(--tg)}.mc-m{background:var(--bi);color:var(--ti)}
+.mc-h{background:var(--bw);color:var(--tw)}.mc-c{background:var(--bd);color:var(--td)}
+.axl{font-size:10px;color:var(--tt);text-align:center}
+.mwrap{display:flex;gap:2rem;align-items:flex-start;margin-bottom:1.5rem;flex-wrap:wrap}
+.legend{display:flex;flex-direction:column;gap:6px;padding-top:2.5rem}
+.li{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ts)}
+.ls{width:13px;height:13px;border-radius:3px}
+.dom{border:0.5px solid var(--bd3);border-radius:var(--r8);margin-bottom:9px;overflow:hidden}
+.dhdr{padding:10px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;background:var(--bp)}
+.dhdr:hover{background:var(--bs)}
+.dname{font-size:13px;font-weight:500;color:var(--tp);flex:1}
+.dpg{display:flex;align-items:center;gap:8px}
+.dpbar{width:56px;background:var(--bs);border-radius:3px;height:5px;overflow:hidden}
+.dpfil{height:100%;border-radius:3px}
+.dppct{font-size:11px;color:var(--ts);min-width:28px;text-align:right}
+.dbody{display:none;border-top:0.5px solid var(--bd3)}.dbody.open{display:block}
+.ctrl{display:flex;align-items:flex-start;gap:10px;padding:8px 14px;border-bottom:0.5px solid var(--bd3)}
+.ctrl:last-child{border-bottom:none}
+.cid{font-size:10px;color:var(--tt);min-width:52px;padding-top:2px;font-family:var(--fm)}
+.cname{font-size:12px;color:var(--tp);flex:1;line-height:1.5}
+.cfind{font-size:11px;color:var(--ts);margin-top:2px;line-height:1.4}
+.cstat{min-width:110px;text-align:right}
+.orgrow{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem}
+.orgrow label{font-size:13px;color:var(--ts)}
+.orgrow select{font-size:13px;padding:5px 10px;border-radius:var(--r6);border:0.5px solid var(--bd2);background:var(--bp);color:var(--tp);cursor:pointer}
+.swrap{margin-bottom:1.5rem}
+.shdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px}
+.spct{font-size:26px;font-weight:500}
+.cgrid{display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;margin-bottom:1.5rem;align-items:start}
+@media(max-width:700px){.cgrid{grid-template-columns:1fr}}
+.cbox{border:0.5px solid var(--bd3);border-radius:var(--r8);padding:1rem}
+.ct{font-size:13px;font-weight:500;color:var(--tp);margin-bottom:.5rem}
+.cleg{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:.625rem}
+.cli{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ts)}
+.csq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.snav{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.sdots{display:flex;gap:4px;align-items:center}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--bd2);cursor:pointer}
+.sdot.on{background:var(--tp);width:8px;height:8px}
+.sbtns{display:flex;gap:8px}
+.sbtn{padding:5px 14px;font-size:13px;border:0.5px solid var(--bd2);border-radius:var(--r6);background:transparent;cursor:pointer;color:var(--ts)}
+.sbtn:hover:not(:disabled){background:var(--bs);color:var(--tp)}
+.sbtn:disabled{opacity:.35;cursor:default}
+.sarea{border:0.5px solid var(--bd3);border-radius:var(--r8);padding:1.75rem;background:var(--bp);min-height:380px}
+.stag{font-size:10px;color:var(--tt);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.625rem}
+.stitle{font-size:20px;font-weight:500;color:var(--tp);margin-bottom:.75rem;line-height:1.3}
+.sbody{font-size:13px;color:var(--ts);line-height:1.7}
+.pol-card{border:0.5px solid var(--bd3);border-radius:var(--r8);margin-bottom:10px;overflow:hidden}
+.pol-hdr{padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--bp)}
+.pol-hdr:hover{background:var(--bs)}
+.pol-name{font-size:13px;font-weight:500;color:var(--tp);flex:1}
+.pol-body{display:none;border-top:0.5px solid var(--bd3);padding:1rem 1.25rem}.pol-body.open{display:block}
+.pol-section{margin-bottom:.875rem}.pol-section:last-child{margin-bottom:0}
+.pol-label{font-size:10px;font-weight:500;color:var(--ts);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.375rem}
+.pol-text{font-size:12px;color:var(--tp);line-height:1.65}
+.pol-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.pol-list li{font-size:12px;color:var(--tp);line-height:1.55;display:flex;gap:8px}
+.pol-list li::before{content:'→';color:var(--tt);flex-shrink:0}
+.raci-tbl{width:100%;border-collapse:collapse;font-size:11px}
+.raci-tbl th{padding:7px 6px;text-align:center;font-weight:500;font-size:10px;color:var(--ts);border-bottom:0.5px solid var(--bd3)}
+.raci-tbl th:first-child{text-align:left}
+.raci-tbl td{padding:7px 6px;border-bottom:0.5px solid var(--bd3);text-align:center;font-size:11px}
+.raci-tbl td:first-child{text-align:left;color:var(--tp)}
+.raci-tbl tr:last-child td{border-bottom:none}
+.rr{color:var(--td);font-weight:500}.ra{color:var(--tw);font-weight:500}
+.rc{color:var(--ti);font-weight:500}.ri{color:var(--ts)}
+.rq{margin-bottom:14px}
+.rqlabel{font-size:11px;font-weight:500;color:var(--ts);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.rqbar{flex:1;height:0.5px;background:var(--bd3)}
+.rqitems{display:flex;flex-wrap:wrap;gap:5px}
+.rqi{padding:3px 10px;border-radius:var(--r6);font-size:11px}
+.rqi-1{background:var(--bd);color:var(--td)}.rqi-2{background:var(--bw);color:var(--tw)}
+.rqi-3{background:var(--bi);color:var(--ti)}.rqi-4{background:var(--bg);color:var(--tg)}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px}
+.kpi-card{border:0.5px solid var(--bd3);border-radius:var(--r8);padding:1rem}
+.kpi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.5rem}
+.kpi-val{font-size:22px;font-weight:500;color:var(--tp)}
+.kpi-name{font-size:12px;color:var(--ts);line-height:1.4;margin-bottom:.375rem}
+.kpi-target{font-size:11px;color:var(--tt);margin-bottom:.5rem}
+.sev-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:1.5rem}
+.sev-card{border:0.5px solid var(--bd3);border-radius:var(--r6);padding:11px}
+.sev-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.sev-row{font-size:11px;color:var(--ts);line-height:1.5;margin-bottom:3px}
+.sev-row strong{color:var(--tp);font-weight:500}
+.phases{display:flex;margin-bottom:1.5rem;overflow-x:auto}
+.phase{flex:1;min-width:90px;border:0.5px solid var(--bd3);padding:10px 8px;text-align:center;border-right:none}
+.phase:last-child{border-right:0.5px solid var(--bd3)}
+.phase:first-child{border-radius:var(--r6) 0 0 var(--r6)}.phase:last-child{border-radius:0 var(--r6) var(--r6) 0}
+.phase-num{width:22px;height:22px;border-radius:50%;background:var(--bs);font-size:11px;font-weight:500;color:var(--ts);display:flex;align-items:center;justify-content:center;margin:0 auto 5px}
+.phase-name{font-size:11px;font-weight:500;color:var(--tp);margin-bottom:3px}
+.phase-time{font-size:10px;color:var(--tt)}
+.scen{border:0.5px solid var(--bd3);border-radius:var(--r8);margin-bottom:9px;overflow:hidden}
+.scen-hdr{padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--bp)}
+.scen-hdr:hover{background:var(--bs)}
+.scen-title{font-size:13px;font-weight:500;color:var(--tp);flex:1}
+.scen-body{display:none;border-top:0.5px solid var(--bd3);padding:1rem 1.25rem}.scen-body.open{display:block}
+.scen-label{font-size:10px;font-weight:500;color:var(--ts);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.375rem;margin-top:.75rem}
+.scen-steps{list-style:none;display:flex;flex-direction:column;gap:4px}
+.scen-steps li{font-size:12px;color:var(--tp);line-height:1.5;display:flex;gap:8px}
+.scen-steps li::before{content:'→';color:var(--tt);flex-shrink:0}
+.vra-score-box{border:0.5px solid var(--bd3);border-radius:var(--r8);padding:1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap}
+.vra-score-val{font-size:36px;font-weight:500;color:var(--tp)}
+.vra-cat{font-size:10px;font-weight:500;color:var(--ts);padding:10px 0 6px;border-bottom:0.5px solid var(--bd3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.vra-row{display:flex;align-items:flex-start;gap:12px;padding:8px 0;border-bottom:0.5px solid var(--bd3)}
+.vra-row:last-child{border-bottom:none}
+.vra-q{font-size:12px;color:var(--tp);flex:1;line-height:1.5;padding-top:3px}
+.vra-btns{display:flex;gap:4px;flex-shrink:0}
+.vra-btn{padding:3px 9px;font-size:11px;border:0.5px solid var(--bd2);border-radius:var(--r6);background:transparent;cursor:pointer;color:var(--ts);white-space:nowrap}
+.vra-btn.yes-on{background:var(--bg);color:var(--tg);border-color:var(--tg)}
+.vra-btn.part-on{background:var(--bw);color:var(--tw);border-color:var(--tw)}
+.vra-btn.no-on{background:var(--bd);color:var(--td);border-color:var(--td)}
+.vra-btn.na-on{background:var(--bs);color:var(--tp);border-color:var(--bd1)}
+.rpt-section{border:0.5px solid var(--bd3);border-radius:var(--r8);padding:1.25rem;margin-bottom:1rem}
+.rpt-h{font-size:13px;font-weight:500;color:var(--tp);margin-bottom:.75rem;display:flex;align-items:center;gap:8px}
+.rpt-p{font-size:12px;color:var(--ts);line-height:1.7;margin-bottom:.625rem}
+.rpt-p:last-child{margin-bottom:0}
+.find-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.find-list li{font-size:12px;color:var(--tp);line-height:1.5;display:flex;gap:8px}
+.find-list li::before{content:'•';color:var(--tt);flex-shrink:0}
+.hm-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:.75rem}
+.hm-lbl{font-size:10px;color:var(--ts);text-align:center;padding:4px 2px}
+.hm-cell{padding:6px 4px;border-radius:var(--r4);font-size:11px;font-weight:500;text-align:center}
+.hm-ok{background:var(--bg);color:var(--tg)}.hm-pt{background:var(--bw);color:var(--tw)}.hm-ni{background:var(--bd);color:var(--td)}
+.rpt-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:.875rem}
+.rpt-mk{font-size:10px;color:var(--tt);margin-bottom:2px}
+.rpt-mv{font-size:12px;font-weight:500;color:var(--tp)}
+.rec-item{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border:0.5px solid var(--bd3);border-radius:var(--r6);margin-bottom:6px}
+.rec-item:last-child{margin-bottom:0}
+.actions-list{display:flex;flex-direction:column;gap:7px}
+.action-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border:0.5px solid var(--bd3);border-radius:var(--r6)}
+.action-num{width:20px;height:20px;border-radius:50%;background:var(--bd);color:var(--td);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.action-meta{font-size:11px;color:var(--ts);margin-top:2px}
+.tc-active{display:inline-block;background:var(--bi);color:var(--ti);border-radius:3px;padding:2px 8px;font-size:10px;font-weight:500}
+.tc-q{display:inline-block;background:var(--bw);color:var(--tw);border-radius:3px;padding:2px 8px;font-size:10px;font-weight:500}
+.tc-empty{display:inline-block;width:20px;height:4px;border-radius:2px;background:var(--bs)}
+footer{border-top:0.5px solid var(--bd3);padding-top:1rem;margin-top:2rem;font-size:11px;color:var(--tt);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="header-top">
+    <h1>🛡️ GRC Cybersecurity Platform</h1>
+    <span>v1.0 — 2025</span>
+  </div>
+  <p>Governance · Risk Management · Compliance — ISO 27001 · NIST CSF · SP 800-61r2 · 15 interactive modules</p>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn on" onclick="switchTab('risk',this)"><i class="ti ti-shield-exclamation"></i> Risk</button>
+  <button class="tab-btn" onclick="switchTab('audit',this)"><i class="ti ti-clipboard-check"></i> Compliance</button>
+  <button class="tab-btn" onclick="switchTab('gov',this)"><i class="ti ti-building-community"></i> Governance</button>
+  <button class="tab-btn" onclick="switchTab('analytics',this)"><i class="ti ti-chart-bar"></i> Analytics</button>
+  <button class="tab-btn" onclick="switchTab('ops',this)"><i class="ti ti-siren"></i> Operations</button>
+  <button class="tab-btn" onclick="switchTab('report',this)"><i class="ti ti-report-analytics"></i> Audit Report</button>
+</nav>
+
+<!-- RISK PANEL -->
+<div id="panel-risk" class="panel on">
+  <div class="sub-nav">
+    <button class="sub-btn on" onclick="switchSub('risk','reg',this)">Risk register</button>
+    <button class="sub-btn" onclick="switchSub('risk','treat',this)">Treatment register</button>
+  </div>
+  <div id="sub-risk-reg" class="sub-panel on"></div>
+  <div id="sub-risk-treat" class="sub-panel"></div>
+</div>
+
+<!-- COMPLIANCE PANEL -->
+<div id="panel-audit" class="panel">
+  <div class="sub-nav">
+    <button class="sub-btn on" onclick="switchSub('audit','main',this)">ISO 27001 audit</button>
+    <button class="sub-btn" onclick="switchSub('audit','ext',this)">Extended domains</button>
+    <button class="sub-btn" onclick="switchSub('audit','soa',this)">Statement of applicability</button>
+    <button class="sub-btn" onclick="switchSub('audit','gap',this)">Gap analysis</button>
+  </div>
+  <div id="sub-audit-main" class="sub-panel on"></div>
+  <div id="sub-audit-ext" class="sub-panel"></div>
+  <div id="sub-audit-soa" class="sub-panel"></div>
+  <div id="sub-audit-gap" class="sub-panel"></div>
+</div>
+
+<!-- GOVERNANCE PANEL -->
+<div id="panel-gov" class="panel">
+  <div class="sub-nav">
+    <button class="sub-btn on" onclick="switchSub('gov','slides',this)">Strategy presentation</button>
+    <button class="sub-btn" onclick="switchSub('gov','policy',this)">Policy templates</button>
+  </div>
+  <div id="sub-gov-slides" class="sub-panel on"></div>
+  <div id="sub-gov-policy" class="sub-panel"></div>
+</div>
+
+<!-- ANALYTICS PANEL -->
+<div id="panel-analytics" class="panel">
+  <div class="sub-nav">
+    <button class="sub-btn on" onclick="switchSub('analytics','dash',this)">Executive dashboard</button>
+    <button class="sub-btn" onclick="switchSub('analytics','charts',this)">Risk analytics</button>
+    <button class="sub-btn" onclick="switchSub('analytics','kpi',this)">Security metrics</button>
+  </div>
+  <div id="sub-analytics-dash" class="sub-panel on"></div>
+  <div id="sub-analytics-charts" class="sub-panel"></div>
+  <div id="sub-analytics-kpi" class="sub-panel"></div>
+</div>
+
+<!-- OPERATIONS PANEL -->
+<div id="panel-ops" class="panel">
+  <div class="sub-nav">
+    <button class="sub-btn on" onclick="switchSub('ops','ir',this)">IR playbook</button>
+    <button class="sub-btn" onclick="switchSub('ops','train',this)">Training program</button>
+    <button class="sub-btn" onclick="switchSub('ops','vra',this)">Vendor assessment</button>
+  </div>
+  <div id="sub-ops-ir" class="sub-panel on"></div>
+  <div id="sub-ops-train" class="sub-panel"></div>
+  <div id="sub-ops-vra" class="sub-panel"></div>
+</div>
+
+<!-- REPORT PANEL -->
+<div id="panel-report" class="panel">
+  <div id="sub-report-main"></div>
+</div>
+
+<footer>
+  <span>🛡️ GRC Cybersecurity Platform — built with HTML5, CSS3, Vanilla JS, Chart.js</span>
+  <span>ISO 27001 · NIST CSF · SP 800-61r2 · SP 800-50</span>
+</footer>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════════
+const RISKS=[
+  {id:'RSK-001',threat:'Phishing attack',cat:'Social engineering',l:4,i:5,mit:'MFA enforcement, security awareness training (quarterly), email gateway with DMARC/DKIM/SPF',owner:'CISO',status:'Active'},
+  {id:'RSK-002',threat:'Ransomware',cat:'Malware',l:3,i:5,mit:'EDR deployment, air-gapped 3-2-1 backups, tested incident response plan, network segmentation',owner:'IT Security',status:'Active'},
+  {id:'RSK-003',threat:'SQL injection',cat:'Web application',l:3,i:4,mit:'Parameterized queries, WAF deployment, SAST/DAST integrated in CI/CD pipeline',owner:'AppSec',status:'Mitigated'},
+  {id:'RSK-004',threat:'Insider threat',cat:'Internal',l:2,i:5,mit:'PAM solution, DLP tooling, UEBA behavioral analytics, least-privilege enforcement',owner:'HR/Security',status:'Active'},
+  {id:'RSK-005',threat:'DDoS attack',cat:'Network',l:3,i:3,mit:'CDN with DDoS mitigation, rate limiting at edge, traffic scrubbing service',owner:'Network Ops',status:'Active'},
+  {id:'RSK-006',threat:'Unpatched vulnerabilities',cat:'Patch management',l:4,i:3,mit:'Automated patch pipeline, bi-weekly vulnerability scanning, 14-day critical patch SLA',owner:'IT Ops',status:'Active'},
+  {id:'RSK-007',threat:'Cloud misconfiguration',cat:'Cloud security',l:3,i:4,mit:'CSPM tool, IaC security scanning in pipelines, monthly cloud security reviews',owner:'Cloud Team',status:'Active'},
+  {id:'RSK-008',threat:'Supply chain attack',cat:'Third-party risk',l:2,i:5,mit:'Vendor risk assessments, SBOM tracking, contractual security clauses, cyber insurance',owner:'Procurement',status:'Active'},
+  {id:'RSK-009',threat:'Credential stuffing',cat:'Authentication',l:4,i:3,mit:'MFA mandate, adaptive account lockout, CAPTCHA, breached credential monitoring',owner:'IAM Team',status:'Active'},
+  {id:'RSK-010',threat:'Data exfiltration',cat:'Data security',l:2,i:5,mit:'DLP solution, CASB for cloud, outbound traffic monitoring, data classification policy',owner:'Data Security',status:'Active'},
+  {id:'RSK-011',threat:'Zero-day exploit',cat:'Vulnerability mgmt',l:2,i:4,mit:'Threat intelligence feeds, virtual patching via WAF/IPS, network micro-segmentation',owner:'Threat Intel',status:'Active'},
+  {id:'RSK-012',threat:'Weak password policy',cat:'Identity',l:4,i:2,mit:'Enterprise password manager, complexity requirements, MFA on all privileged accounts',owner:'IAM Team',status:'Mitigated'},
+];
+
+const DOMAINS=[
+  {id:'A.5',name:'Information security policies',controls:[
+    {id:'A.5.1.1',name:'Policies for information security',tc:'compliant',hf:'partial',ftc:'Board-approved IS policy, published and reviewed annually Q4 2024',fhf:'Policy drafted but not formally approved by management'},
+    {id:'A.5.1.2',name:'Review of policies for information security',tc:'compliant',hf:'non-compliant',ftc:'Annual review with documented change log; next review Q4 2025',fhf:'No formal review cycle; last update over 3 years ago'},
+  ]},
+  {id:'A.6',name:'Organization of information security',controls:[
+    {id:'A.6.1.1',name:'Information security roles and responsibilities',tc:'compliant',hf:'compliant',ftc:'RACI matrix documented, communicated, and maintained org-wide',fhf:'CISO appointed; roles and responsibilities documented in policy'},
+    {id:'A.6.1.2',name:'Segregation of duties',tc:'compliant',hf:'partial',ftc:'SoD enforced across all critical systems and financial processes',fhf:'SoD enforced in financial systems only; IT systems lack controls'},
+    {id:'A.6.1.5',name:'Information security in project management',tc:'partial',hf:'non-compliant',ftc:'Security gate reviews present in ~60% of projects; expanding',fhf:'No security requirements embedded in project lifecycle'},
+  ]},
+  {id:'A.7',name:'Human resource security',controls:[
+    {id:'A.7.1.1',name:'Screening',tc:'compliant',hf:'compliant',ftc:'Pre-employment background checks for all staff roles',fhf:'Background checks for clinical and finance staff only'},
+    {id:'A.7.2.2',name:'Information security awareness, education and training',tc:'compliant',hf:'partial',ftc:'Annual mandatory training via LMS; 96% completion tracked',fhf:'Ad-hoc training; no completion tracking or mandatory requirement'},
+    {id:'A.7.3.1',name:'Termination or change of employment responsibilities',tc:'partial',hf:'non-compliant',ftc:'Offboarding checklist exists; average 3-day account revocation lag',fhf:'No formal offboarding process; ex-employee accounts found active'},
+  ]},
+  {id:'A.8',name:'Asset management',controls:[
+    {id:'A.8.1.1',name:'Inventory of assets',tc:'compliant',hf:'compliant',ftc:'CMDB with automated discovery tool; 98% accuracy',fhf:'Spreadsheet-based inventory updated manually each quarter'},
+    {id:'A.8.1.3',name:'Acceptable use of assets',tc:'compliant',hf:'partial',ftc:'AUP digitally acknowledged at onboarding; annual re-acknowledgement',fhf:'Policy exists but inconsistently enforced across departments'},
+    {id:'A.8.2.1',name:'Classification of information',tc:'partial',hf:'non-compliant',ftc:'4-tier classification scheme defined; labeling tooling partially deployed',fhf:'No data classification scheme or labeling process in place'},
+  ]},
+  {id:'A.9',name:'Access control',controls:[
+    {id:'A.9.1.1',name:'Access control policy',tc:'compliant',hf:'compliant',ftc:'Documented RBAC policy; reviewed and approved annually',fhf:'Policy documented and reviewed annually by the IT manager'},
+    {id:'A.9.2.1',name:'User registration and de-registration',tc:'compliant',hf:'compliant',ftc:'Full identity lifecycle managed via Okta IAM platform',fhf:'Active Directory managed centrally; joiners/leavers process defined'},
+    {id:'A.9.2.3',name:'Management of privileged access rights',tc:'compliant',hf:'partial',ftc:'PAM with just-in-time access and quarterly reviews',fhf:'Shared admin accounts in use on several production servers'},
+    {id:'A.9.4.1',name:'Information access restriction',tc:'compliant',hf:'partial',ftc:'RBAC enforced on all production systems; quarterly access reviews',fhf:'Overly broad permissions found on patient data systems (PHI risk)'},
+  ]},
+  {id:'A.12',name:'Operations security',controls:[
+    {id:'A.12.1.1',name:'Documented operating procedures',tc:'compliant',hf:'partial',ftc:'Runbooks maintained in Confluence; reviewed semi-annually',fhf:'Procedures exist for core systems only; not regularly reviewed'},
+    {id:'A.12.2.1',name:'Controls against malware',tc:'compliant',hf:'compliant',ftc:'EDR on 100% of endpoints; NGFW with threat intelligence feeds',fhf:'AV on all workstations; server EDR coverage in progress'},
+    {id:'A.12.3.1',name:'Information backup',tc:'compliant',hf:'partial',ftc:'3-2-1 backup strategy; monthly tested restore procedures',fhf:'Daily backups taken but restore capability has never been tested'},
+    {id:'A.12.6.1',name:'Management of technical vulnerabilities',tc:'compliant',hf:'non-compliant',ftc:'Bi-weekly Qualys scans; 14-day critical patch SLA tracked in JIRA',fhf:'No vulnerability scanning program or patch management process'},
+  ]},
+  {id:'A.16',name:'Information security incident management',controls:[
+    {id:'A.16.1.1',name:'Responsibilities and procedures',tc:'compliant',hf:'compliant',ftc:'IRP documented; roles assigned; tabletop exercise completed Q3 2024',fhf:'Incident response plan documented; roles assigned to IT team'},
+    {id:'A.16.1.2',name:'Reporting information security events',tc:'compliant',hf:'partial',ftc:'SIEM with automated alerting to 24×7 SOC; sub-1hr MTTD target',fhf:'Email-based reporting only; no SLA or severity matrix defined'},
+    {id:'A.16.1.5',name:'Response to information security incidents',tc:'partial',hf:'non-compliant',ftc:'IRP tested annually; post-incident reviews inconsistently completed',fhf:'No evidence of structured incident response execution or PIRs'},
+  ]},
+];
+
+const EXT_DOMAINS=[
+  {id:'A.10',name:'Cryptography',controls:[
+    {id:'A.10.1.1',name:'Policy on the use of cryptographic controls',tc:'compliant',hf:'partial',ftc:'Crypto policy mandates AES-256 at rest and TLS 1.3 in transit',fhf:'Encryption in use on some systems; no formal crypto standard'},
+    {id:'A.10.1.2',name:'Key management',tc:'partial',hf:'non-compliant',ftc:'Key vault deployed; rotation procedures defined; integration ongoing',fhf:'No key management process; hardcoded credentials found in legacy apps'},
+  ]},
+  {id:'A.11',name:'Physical and environmental security',controls:[
+    {id:'A.11.1.1',name:'Physical security perimeter',tc:'compliant',hf:'compliant',ftc:'Biometric data centre; card-access offices; 24×7 CCTV and visitor logging',fhf:'Badge access on all floors; server room key-card controlled'},
+    {id:'A.11.1.3',name:'Securing offices, rooms and facilities',tc:'compliant',hf:'partial',ftc:'Clean desk policy enforced with spot checks; visitor management system',fhf:'Policy documented but not consistently enforced across all sites'},
+    {id:'A.11.2.6',name:'Security of equipment off-premises',tc:'partial',hf:'non-compliant',ftc:'MDM for all laptops; remote wipe enabled; travel security briefings',fhf:'No MDM; no off-premises equipment handling policy'},
+  ]},
+  {id:'A.13',name:'Communications security',controls:[
+    {id:'A.13.1.1',name:'Network controls',tc:'compliant',hf:'partial',ftc:'VLAN segmentation; NGFW with IPS; quarterly firewall rule reviews',fhf:'Basic firewall only; flat network with no segmentation'},
+    {id:'A.13.2.1',name:'Information transfer policies and procedures',tc:'compliant',hf:'non-compliant',ftc:'Data transfer policy enforced; approved tools only; DLP on email gateway',fhf:'No policy; staff use personal email and consumer file-sharing services'},
+  ]},
+  {id:'A.14',name:'System acquisition, development & maintenance',controls:[
+    {id:'A.14.1.1',name:'Security requirements analysis and specification',tc:'compliant',hf:'non-compliant',ftc:'Security requirements mandatory in all procurement RFPs and SDLC gates',fhf:'No security requirements in procurement or development specifications'},
+    {id:'A.14.2.1',name:'Secure development policy',tc:'partial',hf:'non-compliant',ftc:'Secure coding guidelines published; SAST in CI/CD for ~70% of projects',fhf:'No secure development policy or coding standards defined'},
+    {id:'A.14.2.8',name:'System security testing',tc:'compliant',hf:'partial',ftc:'Annual penetration testing; DAST scanning in staging pipeline',fhf:'Ad-hoc security testing only; no structured pentest program'},
+  ]},
+  {id:'A.15',name:'Supplier relationships',controls:[
+    {id:'A.15.1.1',name:'IS policy for supplier relationships',tc:'compliant',hf:'partial',ftc:'Security schedule in all contracts; annual vendor risk assessments',fhf:'Generic NDA with suppliers; no specific security obligations'},
+    {id:'A.15.2.1',name:'Monitoring and review of supplier services',tc:'partial',hf:'non-compliant',ftc:'Annual supplier reviews; SLA breach escalation tracked',fhf:'No supplier performance monitoring or contract review process'},
+  ]},
+  {id:'A.17',name:'Information security aspects of BCM',controls:[
+    {id:'A.17.1.1',name:'Planning information security continuity',tc:'compliant',hf:'partial',ftc:'IS continuity in BCP; RPO/RTO defined per system classification',fhf:'BCP exists but IS continuity not explicitly addressed'},
+    {id:'A.17.1.3',name:'Verify, review and evaluate IS continuity',tc:'partial',hf:'non-compliant',ftc:'BCP tested annually; IS continuity verified in 2 of 4 test scenarios',fhf:'BCP never tested; no tabletop or DR drill on record'},
+  ]},
+  {id:'A.18',name:'Compliance',controls:[
+    {id:'A.18.1.1',name:'Identification of applicable legislation and contractual requirements',tc:'compliant',hf:'compliant',ftc:'Legal register maintained; GDPR and PCI-DSS obligations tracked quarterly',fhf:'HIPAA compliance tracked; legal register maintained by legal team'},
+    {id:'A.18.1.3',name:'Protection of records',tc:'compliant',hf:'partial',ftc:'Retention schedule enforced via DMS; legal hold process documented',fhf:'Retention schedule documented but inconsistently applied'},
+    {id:'A.18.2.1',name:'Independent review of information security',tc:'partial',hf:'non-compliant',ftc:'Internal IS audit 2024; external review planned Q2 2025',fhf:'No internal or external IS review has ever been conducted'},
+  ]},
+];
+
+const ALL_DOMS=[...DOMAINS,...EXT_DOMAINS];
+
+const GAPS=[
+  {pri:1,finding:'Deploy MFA across all user accounts — phishing risk score 20 (highest)',source:'Risk',cat:'Identity',effort:'M',owner:'IAM Team',target:'Q1 2025'},
+  {pri:1,finding:'Implement EDR and verify offline backup restoration — ransomware score 15',source:'Risk',cat:'Malware',effort:'M',owner:'IT Security',target:'Q1 2025'},
+  {pri:1,finding:'Establish vulnerability scanning program — HealthFirst has zero patch management (A.12.6.1)',source:'Audit',cat:'Vulnerability',effort:'L',owner:'IT Ops',target:'Q1 2025'},
+  {pri:1,finding:'Formalize IS policy and obtain management approval (A.5.1.1/1.2)',source:'Audit',cat:'Policy',effort:'L',owner:'CISO',target:'Q1 2025'},
+  {pri:1,finding:'Create formal offboarding process; revoke all ex-employee accounts (A.7.3.1)',source:'Audit',cat:'Identity',effort:'M',owner:'HR/IT',target:'Q1 2025'},
+  {pri:1,finding:'Define data transfer policy; block consumer file-sharing services (A.13.2.1)',source:'Audit',cat:'Data',effort:'L',owner:'IT Security',target:'Q1 2025'},
+  {pri:2,finding:'Automate patch pipeline with 14-day SLA for critical vulnerabilities',source:'Risk',cat:'Patch mgmt',effort:'M',owner:'IT Ops',target:'Q2 2025'},
+  {pri:2,finding:'Mandate MFA on all privileged accounts; enforce adaptive account lockout',source:'Risk',cat:'Auth',effort:'L',owner:'IAM Team',target:'Q2 2025'},
+  {pri:2,finding:'Deploy CSPM tool for cloud misconfiguration and IaC security scanning',source:'Risk',cat:'Cloud',effort:'H',owner:'Cloud Team',target:'Q2 2025'},
+  {pri:2,finding:'Replace shared admin accounts with PAM solution and just-in-time access',source:'Audit',cat:'Access',effort:'H',owner:'IT Security',target:'Q2 2025'},
+  {pri:2,finding:'Implement 4-tier data classification and deploy DLP across endpoints',source:'Both',cat:'Data',effort:'H',owner:'Data Security',target:'Q2 2025'},
+  {pri:2,finding:'Remove hardcoded credentials; deploy key vault; enforce key rotation (A.10.1.2)',source:'Audit',cat:'Crypto',effort:'M',owner:'AppSec',target:'Q2 2025'},
+  {pri:2,finding:'Integrate security requirements into SDLC and procurement (A.14.1.1)',source:'Audit',cat:'Dev sec',effort:'M',owner:'AppSec',target:'Q2 2025'},
+  {pri:3,finding:'Deploy CDN DDoS mitigation and rate limiting at the network edge',source:'Risk',cat:'Network',effort:'M',owner:'Network Ops',target:'Q3 2025'},
+  {pri:3,finding:'Subscribe to threat intel feeds; implement virtual patching for zero-day exposure',source:'Risk',cat:'Threat intel',effort:'M',owner:'Threat Intel',target:'Q3 2025'},
+  {pri:3,finding:'Implement VLAN segmentation; conduct quarterly firewall rule review (A.13.1.1)',source:'Audit',cat:'Network',effort:'H',owner:'Network Ops',target:'Q3 2025'},
+  {pri:3,finding:'Add security clauses to all supplier contracts; run annual vendor risk assessments',source:'Audit',cat:'Supplier',effort:'L',owner:'Procurement',target:'Q3 2025'},
+  {pri:3,finding:'Deploy MDM for all laptops; enforce remote wipe capability (A.11.2.6)',source:'Audit',cat:'Physical',effort:'M',owner:'IT Ops',target:'Q3 2025'},
+  {pri:4,finding:'Conduct BCP tabletop exercise; test IS continuity scenarios (A.17.1.3)',source:'Audit',cat:'BCM',effort:'M',owner:'IT Ops',target:'Q4 2025'},
+  {pri:4,finding:'Commission independent IS review — internal audit + external assessment',source:'Audit',cat:'Compliance',effort:'H',owner:'CISO',target:'Q4 2025'},
+  {pri:4,finding:'Roll out enterprise password manager; retire weak password practices',source:'Risk',cat:'Identity',effort:'L',owner:'IAM Team',target:'Q4 2025'},
+];
+
+const TREATMENTS=[
+  {id:'RSK-001',threat:'Phishing attack',score:20,level:'critical',strategy:'Mitigate',controls:'MFA enforcement, security awareness training (quarterly), DMARC/DKIM/SPF',eff:'High',residual:12,rLevel:'high',review:'Q2 2025'},
+  {id:'RSK-002',threat:'Ransomware',score:15,level:'critical',strategy:'Mitigate',controls:'EDR, air-gapped 3-2-1 backups, tested incident response plan',eff:'High',residual:10,rLevel:'high',review:'Q2 2025'},
+  {id:'RSK-003',threat:'SQL injection',score:12,level:'high',strategy:'Mitigate',controls:'WAF, parameterized queries, SAST/DAST in CI/CD pipeline',eff:'High',residual:6,rLevel:'medium',review:'Q3 2025'},
+  {id:'RSK-004',threat:'Insider threat',score:10,level:'high',strategy:'Mitigate',controls:'PAM solution, DLP, UEBA behavioral analytics, least privilege',eff:'Medium',residual:8,rLevel:'medium',review:'Q2 2025'},
+  {id:'RSK-005',threat:'DDoS attack',score:9,level:'medium',strategy:'Transfer + Mitigate',controls:'CDN with DDoS mitigation, rate limiting, cyber insurance',eff:'Medium',residual:6,rLevel:'medium',review:'Q3 2025'},
+  {id:'RSK-006',threat:'Unpatched vulnerabilities',score:12,level:'high',strategy:'Mitigate',controls:'Automated patch pipeline, vulnerability scanning, 14-day critical SLA',eff:'High',residual:6,rLevel:'medium',review:'Q2 2025'},
+  {id:'RSK-007',threat:'Cloud misconfiguration',score:12,level:'high',strategy:'Mitigate',controls:'CSPM tool, IaC security scanning, monthly cloud security reviews',eff:'High',residual:6,rLevel:'medium',review:'Q3 2025'},
+  {id:'RSK-008',threat:'Supply chain attack',score:10,level:'high',strategy:'Mitigate + Transfer',controls:'Vendor risk assessments, SBOM tracking, contractual clauses, cyber insurance',eff:'Medium',residual:8,rLevel:'medium',review:'Q3 2025'},
+  {id:'RSK-009',threat:'Credential stuffing',score:12,level:'high',strategy:'Mitigate',controls:'MFA mandate, adaptive lockout, CAPTCHA, HaveIBeenPwned checks',eff:'High',residual:6,rLevel:'medium',review:'Q2 2025'},
+  {id:'RSK-010',threat:'Data exfiltration',score:10,level:'high',strategy:'Mitigate',controls:'DLP, CASB for cloud, outbound monitoring, data classification policy',eff:'Medium',residual:8,rLevel:'medium',review:'Q3 2025'},
+  {id:'RSK-011',threat:'Zero-day exploit',score:8,level:'medium',strategy:'Accept + Mitigate',controls:'Threat intelligence feeds, virtual patching, network micro-segmentation',eff:'Low',residual:6,rLevel:'medium',review:'Q4 2025'},
+  {id:'RSK-012',threat:'Weak password policy',score:8,level:'medium',strategy:'Mitigate',controls:'Enterprise password manager, complexity requirements, MFA rollout',eff:'High',residual:4,rLevel:'low',review:'Q1 2025'},
+];
+
+const POLICIES=[
+  {id:'isms',name:'Information security policy',icon:'ti-file-text',
+   purpose:'To establish executive commitment to protecting organizational information assets and define the overarching framework for information security management.',
+   scope:'All employees, contractors, and third parties; all systems, processes, and locations that handle organizational information.',
+   statements:['Information security risks shall be identified, assessed, and treated according to the risk management framework.','All personnel are responsible for protecting information in their custody, regardless of format or medium.','Information shall be classified and handled per the data classification policy and applicable regulations.','Security incidents shall be reported immediately to the IT Security team via the designated channel.','Compliance is mandatory; non-compliance may result in disciplinary action up to and including termination.'],
+   roles:'CISO (policy owner, accountable), IT Security (implementation), All personnel (compliance)',review:'Annual — approved by board of directors'},
+  {id:'access',name:'Access control policy',icon:'ti-lock-access',
+   purpose:'To ensure only authorized individuals access organizational systems and prevent unauthorized access to information assets.',
+   scope:'All information systems, applications, infrastructure, and datasets owned or operated by the organization.',
+   statements:['Access shall be granted on the principle of least privilege — users receive only access required for their role.','All access requests must be formally submitted, approved by the asset owner, and provisioned via the IAM system.','Multi-factor authentication is mandatory for all remote access, cloud services, and privileged account activity.','Access rights shall be reviewed quarterly and revoked immediately upon role change, termination, or extended absence.','Shared or generic accounts are prohibited in production environments without documented approval.'],
+   roles:'IAM Team (administration), IT Security (quarterly reviews), HR (provisioning triggers), Managers (approval)',review:'Annual — with mandatory quarterly access certification'},
+  {id:'ir',name:'Incident response policy',icon:'ti-alert-triangle',
+   purpose:'To ensure a timely, coordinated, and effective response to information security incidents, minimizing business impact.',
+   scope:'All security events and incidents affecting organizational information assets, regardless of severity or origin.',
+   statements:['All suspected incidents must be reported to the SOC within 1 hour of discovery.','Incidents shall be classified by severity (P1–P4) using the severity matrix and escalated accordingly.','The Incident Response Team shall be activated within 2 hours for all P1 and P2 severity incidents.','Evidence must be preserved in a forensically sound manner per legal and regulatory requirements.','Post-incident reviews shall be completed within 5 business days of closure for P1 and P2 incidents.'],
+   roles:'CISO (accountable), SOC (initial response), IT Security (investigation), Legal (guidance), Comms (disclosure)',review:'Annual — mandatory review following any P1 incident'},
+  {id:'data',name:'Data classification policy',icon:'ti-tag',
+   purpose:'To ensure organizational information is classified and protected proportionally to its sensitivity and regulatory requirements.',
+   scope:'All information created, stored, processed, or transmitted by the organization, in any format.',
+   statements:['All information assets shall be classified into one of four tiers: Public, Internal, Confidential, or Restricted.','Classification shall be assigned by the data owner and reviewed upon any significant content change.','Each classification tier has defined handling requirements for storage, transmission, sharing, and disposal.','Restricted and Confidential data must be encrypted at rest (AES-256) and in transit (TLS 1.3 minimum).','Data owners are accountable for maintaining accurate classification; IT Security enforces technical controls.'],
+   roles:'Data Security (framework), Data Owners (classification), IT (technical enforcement), All staff (compliance)',review:'Annual — with quarterly review of Restricted-tier data inventory'},
+  {id:'aup',name:'Acceptable use policy',icon:'ti-device-laptop',
+   purpose:'To define acceptable use of organizational systems, networks, and information, protecting the organization from associated risks.',
+   scope:'All employees, contractors, and third parties with access to organizational systems, networks, or data.',
+   statements:['Organizational systems and networks shall be used primarily for legitimate, authorized business purposes.','Unauthorized installation of software, modification of configurations, or connection of personal devices is prohibited.','Incidental personal use is tolerated but must not compromise security, productivity, or regulatory compliance.','Transmission of offensive, illegal, or confidential data through personal or unauthorized channels is prohibited.','All activities on organizational systems are subject to monitoring per applicable law and employee notice.'],
+   roles:'HR (policy owner), IT Security (technical monitoring), Legal (compliance), All personnel (adherence)',review:'Annual — acknowledged at onboarding and each calendar year'},
+  {id:'bcp',name:'Business continuity policy',icon:'ti-refresh',
+   purpose:'To ensure the organization can maintain critical operations during adverse events and recover within defined timeframes.',
+   scope:'All critical business processes, supporting systems, infrastructure, and personnel required for continuity.',
+   statements:['Business impact analyses (BIAs) shall be conducted annually to identify critical functions and recovery priorities.','Recovery Time Objectives (RTO) and Recovery Point Objectives (RPO) shall be formally defined per critical system.','BCP and DRP plans shall be tested annually and updated following any significant change or major incident.','Information security continuity shall be explicitly addressed within all BCP/DRP exercises.','All critical systems shall have documented alternate procedures and identified backup resources or alternate sites.'],
+   roles:'IT Ops (BCP/DRP), CISO (IS continuity), Business Units (process continuity), Exec (approval)',review:'Annual — mandatory update following any major incident or organizational restructure'},
+];
+
+const SLIDES=[
+  {tag:'Title',title:'Cybersecurity governance strategy 2025',body:`<p style="margin-bottom:1.25rem;font-size:14px">Protecting organizational assets through structured governance, risk management, and compliance — a strategic framework for the CISO office and executive leadership.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px">${[['Classification','Confidential'],['Owner','CISO Office'],['Framework','ISO 27001 / NIST CSF'],['Version','v2.1 — 2025'],['Review cycle','Annual'],['Status','Board approved']].map(([k,v])=>`<div style="border:0.5px solid var(--bd3);border-radius:var(--r6);padding:10px"><div style="font-size:10px;color:var(--tt);margin-bottom:3px">${k}</div><div style="font-size:12px;font-weight:500;color:var(--tp)">${v}</div></div>`).join('')}</div>`},
+  {tag:'Executive summary',title:'Executive summary',body:`<p style="margin-bottom:1rem">This strategy establishes a comprehensive framework to identify, assess, and manage cybersecurity risk while aligning with regulatory obligations and business objectives.</p><div style="display:flex;flex-direction:column;gap:7px">${[['ti-shield-check','Establish a risk-aware culture through governance, training, and clear accountability'],['ti-lock','Implement controls aligned to ISO 27001, NIST CSF, and applicable regulations'],['ti-trending-up','Continuously improve security posture through metrics, audits, and remediation'],['ti-users','Define clear roles and responsibilities across all security functions'],['ti-file-certificate','Achieve and maintain compliance with industry frameworks and mandates']].map(([ic,t])=>`<div style="display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:0.5px solid var(--bd3);border-radius:var(--r6)"><i class="ti ${ic}" style="font-size:15px;color:var(--ts);margin-top:1px"></i><span style="font-size:12px;color:var(--tp);line-height:1.5">${t}</span></div>`).join('')}</div>`},
+  {tag:'Cybersecurity policies',title:'Cybersecurity policies',body:`<p style="margin-bottom:1rem">Six core policies govern all information security activities. Each reviewed annually and approved by executive leadership.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:9px">${[['ti-file-text','Information security policy','Master policy — executive-endorsed framework for protecting all information assets.'],['ti-lock-access','Access control policy','Authentication, authorization, PAM, and full account lifecycle management rules.'],['ti-alert-triangle','Incident response policy','Detecting, classifying, containing, and recovering from security incidents.'],['ti-tag','Data classification policy','4-tier scheme (Public/Internal/Confidential/Restricted) with handling requirements.'],['ti-device-laptop','Acceptable use policy','Permitted and prohibited uses of organizational systems by all personnel.'],['ti-refresh','Business continuity policy','BCP and DRP requirements to maintain critical operations during adverse events.']].map(([ic,n,d])=>`<div style="border:0.5px solid var(--bd3);border-radius:var(--r6);padding:11px"><div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--tp);margin-bottom:4px"><i class="ti ${ic}" style="font-size:14px"></i>${n}</div><div style="font-size:11px;color:var(--ts);line-height:1.5">${d}</div></div>`).join('')}</div>`},
+  {tag:'RACI matrix',title:'Roles & responsibilities (RACI)',body:`<p style="margin-bottom:.75rem">Accountability matrix for key security activities. <span class="rr">R</span> = Responsible &nbsp;<span class="ra">A</span> = Accountable &nbsp;<span class="rc">C</span> = Consulted &nbsp;<span class="ri">I</span> = Informed</p><div style="overflow-x:auto"><table class="raci-tbl"><thead><tr><th style="text-align:left;min-width:150px">Activity</th><th>CISO</th><th>IT Sec</th><th>IT Ops</th><th>HR</th><th>Legal</th><th>Bus. units</th></tr></thead><tbody>${[['Policy development','A','R','C','C','C','I'],['Risk assessment','A','R','C','I','C','I'],['Incident response','A','R','R','I','C','I'],['Security awareness','A','R','I','R','I','I'],['Compliance monitoring','A','R','C','I','C','I'],['Vulnerability management','A','R','R','I','I','I'],['Third-party risk','A','C','I','I','R','I'],['Access provisioning','I','C','R','C','I','I'],['Business continuity','A','C','R','I','I','C']].map(([a,...cols])=>`<tr><td>${a}</td>${cols.map(c=>`<td class="r${c.toLowerCase()}">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`},
+  {tag:'Security controls roadmap',title:'Security controls roadmap',body:`<p style="margin-bottom:1rem">Phased implementation plan across four quarters. Items color-coded by phase priority.</p>${[{q:'Q1 2025 — Foundation',p:1,items:['Policy framework review & approval','Enterprise asset inventory (CMDB)','MFA rollout — privileged accounts','Security awareness training launch','Vulnerability scanning (Qualys/Tenable)']},{q:'Q2 2025 — Detect & respond',p:2,items:['SIEM deployment & tuning','EDR rollout — 100% endpoint coverage','SOC operations (8×5 → 24×7)','Incident response plan tabletop test','PAM solution implementation']},{q:'Q3 2025 — Advanced controls',p:3,items:['Zero Trust network architecture','CSPM deployment','Annual penetration testing','Data classification & DLP','Third-party risk management']},{q:'Q4 2025 — Optimize & certify',p:4,items:['Security metrics dashboard','ISO 27001 internal audit readiness','Automate routine security workflows','BCP/DR tabletop exercises','Executive & board briefing']}].map(({q,p,items})=>`<div class="rq"><div class="rqlabel">${q}<div class="rqbar"></div></div><div class="rqitems">${items.map(i=>`<span class="rqi rqi-${p}">${i}</span>`).join('')}</div></div>`).join('')}`},
+  {tag:'KPIs & metrics',title:'KPIs & success metrics',body:`<p style="margin-bottom:1rem">Six core KPIs tracked monthly and reported to executive leadership. Targets represent mature security program benchmarks.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px">${[['< 4 hrs','Mean time to detect (MTTD)','Target: under 4 hours for critical incidents'],['< 24 hrs','Mean time to respond (MTTR)','Target: contained within 24 hours'],['> 95%','Patch compliance rate','Critical vulnerabilities patched within 14 days'],['> 90%','Security training completion','Annual mandatory training across all staff'],['< 5%','Phishing click-through rate','Measured via quarterly simulated campaigns'],['> 98%','Critical vuln. SLA adherence','Remediation within defined risk SLA windows']].map(([m,n,t])=>`<div style="border:0.5px solid var(--bd3);border-radius:var(--r6);padding:12px"><div style="font-size:20px;font-weight:500;color:var(--tp);margin-bottom:2px">${m}</div><div style="font-size:11px;color:var(--ts);line-height:1.4;margin-bottom:4px">${n}</div><div style="font-size:10px;color:var(--tt)">${t}</div></div>`).join('')}</div>`},
+];
+
+const SCENARIOS=[
+  {id:'phish',title:'Phishing / business email compromise',sev:'P2',icon:'ti-mail-forward',
+   indicators:['Suspicious email reported by employee with unusual sender or link','Unexpected login alert from unfamiliar geography or device','Credentials found in external breach database (dark web alert)','Abnormal email forwarding rules detected in email audit logs'],
+   immediate:['Isolate the affected user account immediately — disable login access','Reset credentials and revoke all active sessions and tokens','Preserve email headers, forwarding rules, and logs as forensic evidence','Alert SOC and initiate P2 incident response workflow'],
+   contain:['Block malicious sender domains and URLs at email gateway','Scan environment for similar messages using extracted IOCs','Disable any unauthorized mail forwarding or delegation rules','Check for lateral movement or unauthorized access to sensitive data'],
+   eradicate:['Purge malicious emails from all affected mailboxes','Review and harden email security — validate DMARC/DKIM/SPF configuration','Scan for data exfiltration via email, cloud storage, or external transfer','Verify no unauthorized OAuth apps granted access to mailbox'],
+   recover:['Re-enable account after credential reset and mandatory MFA enrolment','Confirm email security controls functioning correctly','Notify affected users; provide targeted phishing awareness training','Brief CISO; log incident in risk register; update security playbook'],
+   notify:'IT Security Lead (1hr) → CISO (2hrs) → Legal if PII involved → HR if employee compromise confirmed'},
+  {id:'ransom',title:'Ransomware attack',sev:'P1',icon:'ti-lock-exclamation',
+   indicators:['Files encrypted with unfamiliar extensions across endpoints or file shares','Ransom note discovered on endpoint, file server, or shared drive','Mass file modification alerts triggered from SIEM or EDR solution','Lateral movement detected across internal network (east-west traffic)'],
+   immediate:['Isolate ALL affected systems from the network immediately','Activate P1 incident response team; notify CISO within 15 minutes','Do NOT pay the ransom — escalate to Legal for immediate guidance','Contact cyber insurance provider within first 30 minutes of discovery'],
+   contain:['Segment network to prevent further ransomware propagation','Disable compromised accounts, service accounts, and shared credentials','Block known command-and-control (C2) infrastructure at firewall and DNS','Capture forensic images of affected systems before any remediation'],
+   eradicate:['Identify and remove ransomware payload and all persistence mechanisms','Patch the initial access vector (phishing link, unpatched RDP, CVE)','Conduct full EDR threat hunt across all endpoints','Rebuild affected systems from clean, verified, offline images'],
+   recover:['Restore from last known-good air-gapped backup; verify data integrity','Test restored systems in isolated environment before returning to production','Implement enhanced monitoring for re-infection indicators post-recovery','Conduct full post-incident review (PIR) within 5 business days'],
+   notify:'CISO immediately → Exec team (30min) → Legal + Insurance (1hr) → Regulatory authority if required → Affected customers per GDPR/breach notification obligations'},
+  {id:'breach',title:'Data breach / unauthorized access',sev:'P1',icon:'ti-database-exclamation',
+   indicators:['Unusual data access volumes or unexpected after-hours system activity','Data discovered on external paste sites, forums, or dark web monitoring alerts','DLP alert triggered for large-volume outbound data transfer','External notification from researcher, customer, or regulatory body'],
+   immediate:['Identify scope of potentially exposed data — records, classification, volume','Preserve all access logs, audit trails, and system state immediately','Notify CISO and Legal within 30 minutes of confirmed or suspected breach','Do not remediate systems until forensic imaging is complete'],
+   contain:['Revoke access for compromised accounts or stolen credentials','Block identified exfiltration pathways (email, USB, cloud uploads)','Activate CASB and DLP rules for enhanced real-time monitoring','Restrict access to affected data stores to essential personnel only'],
+   eradicate:['Close the initial access vector (credential stuffing, vulnerability, insider)','Audit and tighten access controls on all affected systems','Verify no persistent backdoors or unauthorized access mechanisms remain','Rotate all service account credentials and exposed API keys'],
+   recover:['Notify affected individuals as required by GDPR, PIPEDA, or HIPAA','Report to regulatory authorities within required timeframe (GDPR: 72hrs)','Offer credit monitoring or identity protection for affected individuals where appropriate','Implement enhanced data access anomaly detection post-incident'],
+   notify:'CISO (immediate) → Legal (30min) → DPO (30min) → Regulatory authority within 72hrs (GDPR) → Affected data subjects as required'},
+  {id:'cloud',title:'Cloud misconfiguration / exposure',sev:'P2',icon:'ti-cloud-exclamation',
+   indicators:['CSPM tool alert for publicly exposed storage bucket, database, or API endpoint','Unusual public internet access detected to internal management port or service','Cloud provider security advisory about a specific configuration vulnerability','External researcher or penetration tester reports an exposed cloud asset'],
+   immediate:['Immediately restrict public access on the misconfigured cloud resource','Determine if sensitive data was accessible or exfiltrated during exposure window','Preserve cloud access logs, audit trails, and storage access records','Notify IT Security Lead and Cloud Team; escalate to CISO if data confirmed exposed'],
+   contain:['Apply least-privilege access controls to the affected resource immediately','Enable versioning and object-level logging if not already active','Review all resources in the affected cloud account for similar misconfigurations','Revoke any external access keys or tokens that may have been exposed'],
+   eradicate:['Identify root cause: IaC error, manual change, or missing policy enforcement','Apply corrective guardrail in CSPM policy and IaC scanning pipeline','Remediate all similar misconfigurations found in account-wide audit','Update cloud security baseline; re-run full CSPM policy scan to validate'],
+   recover:['Restore resource to its intended secure configuration state','Add automated detection rule for this specific misconfiguration pattern','Update runbook and CSPM alert thresholds to catch future occurrences','Conduct lessons-learned session with Cloud Team and Security within 5 days'],
+   notify:'Cloud Team Lead (immediate) → IT Security (30min) → CISO (1hr) → Legal if customer data confirmed exposed'},
+];
+
+const METRICS=[
+  {name:'Mean time to detect (MTTD)',current:'6.2 hrs',target:'< 4 hrs',score:65,status:'at-risk',trendText:'Improving — down from 9.1 hrs last quarter'},
+  {name:'Mean time to respond (MTTR)',current:'18.5 hrs',target:'< 24 hrs',score:100,status:'on-track',trendText:'On target — down from 22 hrs last quarter'},
+  {name:'Patch compliance rate',current:'87%',target:'> 95%',score:92,status:'at-risk',trendText:'Improving — up from 81% last quarter'},
+  {name:'Security training completion',current:'94%',target:'> 90%',score:100,status:'on-track',trendText:'Exceeding target — 94% of staff completed'},
+  {name:'Phishing click-through rate',current:'8.3%',target:'< 5%',score:60,status:'off-track',trendText:'Improving — down from 12% but above target'},
+  {name:'Critical vuln. SLA adherence',current:'96%',target:'> 98%',score:98,status:'at-risk',trendText:'Near target — 4 critical patches outside SLA this quarter'},
+];
+
+const TRAINING=[
+  {name:'General security awareness',audience:'All staff',duration:'30 min',method:'E-learning',q:[1],mandatory:true,completion:98},
+  {name:'Phishing simulation & training',audience:'All staff',duration:'15 min',method:'Simulation',q:[1,2,3,4],mandatory:true,completion:100},
+  {name:'Data classification & handling',audience:'All staff',duration:'20 min',method:'E-learning',q:[2],mandatory:true,completion:94},
+  {name:'Password security & MFA',audience:'All staff',duration:'15 min',method:'E-learning',q:[1],mandatory:true,completion:99},
+  {name:'Physical security awareness',audience:'All staff',duration:'20 min',method:'E-learning',q:[3],mandatory:true,completion:91},
+  {name:'Incident reporting procedures',audience:'All staff',duration:'15 min',method:'E-learning',q:[2],mandatory:true,completion:96},
+  {name:'Social engineering & vishing',audience:'All staff',duration:'30 min',method:'Workshop',q:[3],mandatory:false,completion:82},
+  {name:'GDPR & privacy obligations',audience:'All staff',duration:'30 min',method:'E-learning',q:[4],mandatory:true,completion:null},
+  {name:'Privileged user security',audience:'IT / Admin',duration:'45 min',method:'Instructor-led',q:[4],mandatory:true,completion:null},
+  {name:'Secure coding (OWASP Top 10)',audience:'Developers',duration:'60 min',method:'Workshop',q:[3],mandatory:true,completion:87},
+  {name:'Third-party risk management',audience:'Procurement',duration:'30 min',method:'Workshop',q:[4],mandatory:false,completion:null},
+  {name:'Executive security briefing',audience:'Leadership',duration:'60 min',method:'Briefing',q:[4],mandatory:false,completion:null},
+];
+
+const VRA_Q=[
+  {id:'A1',cat:'A. Information security governance',q:'Does the vendor have a documented information security policy approved by senior management?'},
+  {id:'A2',cat:'A. Information security governance',q:'Is there a designated CISO or equivalent information security lead with board-level reporting?'},
+  {id:'A3',cat:'A. Information security governance',q:'Has the vendor achieved or is pursuing ISO 27001, SOC 2 Type II, or equivalent certification?'},
+  {id:'A4',cat:'A. Information security governance',q:'Are information security risks formally assessed, documented, and reviewed at least annually?'},
+  {id:'A5',cat:'A. Information security governance',q:'Does the vendor conduct regular independent security audits or third-party penetration testing?'},
+  {id:'B1',cat:'B. Access control',q:'Is MFA enforced for all remote access and privileged account activity?'},
+  {id:'B2',cat:'B. Access control',q:'Is access to customer data governed by the principle of least privilege and need-to-know?'},
+  {id:'B3',cat:'B. Access control',q:'Are access rights reviewed at least quarterly and revoked immediately upon staff departure?'},
+  {id:'B4',cat:'B. Access control',q:'Is privileged access managed through a PAM solution with session logging and just-in-time provisioning?'},
+  {id:'C1',cat:'C. Data protection',q:'Is all data at rest encrypted using AES-256 or an equivalent approved algorithm?'},
+  {id:'C2',cat:'C. Data protection',q:'Is all data in transit protected using TLS 1.2 or higher with current cipher suites?'},
+  {id:'C3',cat:'C. Data protection',q:'Does the vendor have a documented data retention, archival, and secure deletion policy?'},
+  {id:'C4',cat:'C. Data protection',q:'Are backup copies encrypted and stored separately from primary systems?'},
+  {id:'C5',cat:'C. Data protection',q:'Does the vendor conduct periodic data classification reviews and maintain an asset register?'},
+  {id:'D1',cat:'D. Incident response',q:'Does the vendor have a documented and tested incident response plan?'},
+  {id:'D2',cat:'D. Incident response',q:'Is there a defined SLA for notifying customers of security incidents affecting their data?'},
+  {id:'D3',cat:'D. Incident response',q:'Has the IRP been exercised via tabletop or live simulation in the past 12 months?'},
+  {id:'D4',cat:'D. Incident response',q:'Does the vendor maintain cyber liability insurance with adequate coverage limits?'},
+  {id:'E1',cat:'E. Business continuity',q:'Does the vendor have a documented, tested, and approved business continuity plan?'},
+  {id:'E2',cat:'E. Business continuity',q:'Are formal RPO and RTO targets agreed for all services provided to your organization?'},
+  {id:'E3',cat:'E. Business continuity',q:'Is there geographically distributed or redundant infrastructure for critical services?'},
+  {id:'F1',cat:'F. Compliance & governance',q:'Is the vendor demonstrably compliant with applicable regulations (GDPR, HIPAA, PCI-DSS)?'},
+  {id:'F2',cat:'F. Compliance & governance',q:'Does the vendor conduct mandatory security awareness training for all staff annually?'},
+  {id:'F3',cat:'F. Compliance & governance',q:'Are sub-processors subject to equivalent security requirements?'},
+  {id:'F4',cat:'F. Compliance & governance',q:'Does the vendor provide a security contact and maintain a responsible disclosure program?'},
+];
+
+const REPORT={
+  techcorp:{name:'TechCorp Ltd',industry:'Technology',employees:'1,200',compliance:88,implemented:29,partial:8,notImpl:1,
+    domScores:[100,83,83,83,100,75,83,100,100,83,75,83,75,83],
+    findings:['Two critical-severity risks (phishing score 20, ransomware score 15) require immediate MFA and EDR deployment.','Overall ISO 27001 compliance rate of 88% — above baseline; minor gaps in A.10 key management and A.17 BCM testing.','Seven controls assessed as Partial — primarily in project security integration, offboarding, and key vault coverage.','Patch compliance rate of 87% is below the 95% target; automated pipeline deployment is underway.','Phishing click-through rate of 8.3% in Q1 simulation exceeds the 5% target; monthly cadence recommended.'],
+    recs:[{p:'P1',t:'Deploy MFA organization-wide and mandate for all SaaS applications within 30 days.'},{p:'P1',t:'Implement EDR on 100% of endpoints and validate offline backup restoration procedures.'},{p:'P2',t:'Invest in SOC capability to reduce MTTD from 6.2 hrs to the 4-hour target.'},{p:'P2',t:'Complete key vault integration for all services; enforce automated key rotation.'},{p:'P3',t:'Expand BCP test scenarios to cover all 4 information security continuity scenarios.'}],
+    conclusion:'TechCorp Ltd demonstrates a mature security posture with largely compliant ISO 27001 controls. With P1 remediation items addressed in Q1–Q2 2025, the organization is on track for ISO 27001 certification readiness by Q4 2025.'},
+  health:{name:'HealthFirst Inc',industry:'Healthcare (HIPAA)',employees:'450',compliance:42,implemented:8,partial:12,notImpl:18,
+    domScores:[25,50,50,50,75,25,50,50,25,17,25,50,25,50],
+    findings:['18 of 38 ISO 27001 controls are not implemented — a critical gap with HIPAA security rule obligations.','No vulnerability scanning or patch management program exists — a critical operational security gap.','Ex-employee accounts found active in Active Directory — a direct violation of access control requirements.','Backup restoration has never been tested; data recovery capability is unverified.','Staff using personal email and consumer cloud storage for organizational data — PHI exposure risk.'],
+    recs:[{p:'P1',t:'Immediately audit and disable all terminated employee accounts; implement formal offboarding.'},{p:'P1',t:'Deploy vulnerability scanning (Qualys/Tenable) and establish a 14-day critical patch SLA.'},{p:'P1',t:'Formalize and obtain executive approval for the information security policy.'},{p:'P2',t:'Deploy MFA for all clinical systems access; implement access control with quarterly reviews.'},{p:'P2',t:'Test backup restoration; implement 3-2-1 strategy; document RTO/RPO for critical systems.'}],
+    conclusion:'HealthFirst Inc presents a significantly elevated risk profile with a 42% compliance score and multiple critical HIPAA gaps. Immediate executive sponsorship and a structured 12-month remediation program are essential. P1 actions must begin within 30 days to reduce PHI exposure and meet regulatory obligations.'},
+};
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let riskFilter='all',auditOrg='techcorp',auditOpen=new Set(),extOrg='techcorp',extOpen=new Set();
+let soaOrg='techcorp',soaOpen=new Set(),soaFilter='all',gapFilter='all';
+let slideIdx=0,polOpen=new Set(),irOpen=new Set(),vraAnswers={},reportOrg='techcorp';
+let chartDash1=null,chartDash2=null,chartBar=null,chartDonut=null;
+let rendered={treat:false,ext:false,soa:false,gap:false,gov:false,dash:false,charts:false,kpi:false,ir:false,train:false,vra:false,report:false};
+
+// ═══════════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════════
+const rl=s=>s>=15?'critical':s>=10?'high':s>=6?'medium':'low';
+const bc=l=>({critical:'b-c',high:'b-h',medium:'b-m',low:'b-l'})[l];
+const bl=l=>l.charAt(0).toUpperCase()+l.slice(1);
+const pfc=p=>p>=80?'#1D9E75':p>=50?'#BA7517':'#E24B4A';
+const sbadge=s=>s==='compliant'?'<span class="badge b-ok">Compliant</span>':s==='partial'?'<span class="badge b-pt">Partial</span>':s==='non-compliant'?'<span class="badge b-nc">Non-compliant</span>':'<span class="badge b-na">N/A</span>';
+const stbadge=s=>({implemented:'<span class="badge b-ok">Implemented</span>',partial:'<span class="badge b-pt">Partial</span>',planned:'<span class="badge b-pl">Planned</span>','not-implemented':'<span class="badge b-ni">Not implemented</span>','not-applicable':'<span class="badge b-na">N/A</span>'})[s]||'<span class="badge b-na">—</span>';
+function domPct(d,org){let t=0,s=0;const key=ok(org);d.controls.forEach(c=>{const v=c[key];if(v&&v!=='na'){t++;s+=(v==='compliant'?1:v==='partial'?.5:0)}});return t?Math.round((s/t)*100):0}
+function totalPct(doms,org){let t=0,s=0;const key=ok(org);doms.forEach(d=>d.controls.forEach(c=>{const v=c[key];if(v&&v!=='na'){t++;s+=(v==='compliant'?1:v==='partial'?.5:0)}}));return t?Math.round((s/t)*100):0}
+const isDark=()=>window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
+// Maps org selector value → data field key
+const ok=org=>org==='techcorp'?'tc':'hf';
+const fk=org=>org==='techcorp'?'ftc':'fhf';
+
+// ═══════════════════════════════════════════════════════════════
+// RISK REGISTER
+// ═══════════════════════════════════════════════════════════════
+function renderRisk(){
+  const scores=RISKS.map(r=>({...r,score:r.l*r.i,level:rl(r.l*r.i)}));
+  const crit=scores.filter(r=>r.level==='critical').length,hi=scores.filter(r=>r.level==='high').length,med=scores.filter(r=>r.level==='medium').length,lo=scores.filter(r=>r.level==='low').length;
+  const cells=[];
+  for(let imp=5;imp>=1;imp--){cells.push(`<div class="ml">${imp}</div>`);for(let lik=1;lik<=5;lik++){const s=imp*lik;cells.push(`<div class="mc ${s>=15?'mc-c':s>=10?'mc-h':s>=6?'mc-m':'mc-l'}">${s}</div>`);}}
+  cells.push('<div></div>');for(let n=1;n<=5;n++)cells.push(`<div class="axl">${n}</div>`);
+  const filtered=riskFilter==='all'?scores:scores.filter(r=>r.level===riskFilter);
+  const rows=filtered.map(r=>`<tr><td style="font-family:var(--fm);font-size:10px;color:var(--ts)">${r.id}</td><td style="font-weight:500;min-width:130px">${r.threat}</td><td style="color:var(--ts);min-width:110px">${r.cat}</td><td style="text-align:center">${r.l}</td><td style="text-align:center">${r.i}</td><td style="text-align:center;font-weight:500">${r.score}</td><td><span class="badge ${bc(r.level)}">${bl(r.level)}</span></td><td style="color:var(--ts);font-size:11px;min-width:220px">${r.mit}</td><td style="color:var(--ts)">${r.owner}</td><td><span class="badge ${r.status==='Active'?'b-h':'b-ok'}">${r.status}</span></td></tr>`).join('');
+  document.getElementById('sub-risk-reg').innerHTML=`<div class="sec-title">Risk register</div><div class="sec-sub">12 cyber threats scored by Likelihood × Impact with mitigation strategies and owner tracking</div><div class="mgrid"><div class="mcard"><div class="mlb">Total risks</div><div class="mvl">${RISKS.length}</div></div><div class="mcard"><div class="mlb">Critical</div><div class="mvl cr">${crit}</div></div><div class="mcard"><div class="mlb">High</div><div class="mvl hi">${hi}</div></div><div class="mcard"><div class="mlb">Medium / Low</div><div class="mvl in">${med+lo}</div></div></div><div class="mwrap"><div><div style="font-size:13px;font-weight:500;color:var(--tp);margin-bottom:3px">Risk matrix (Likelihood → / Impact ↑)</div><div class="matrix">${cells.join('')}</div></div><div class="legend"><div style="font-size:11px;font-weight:500;color:var(--ts);margin-bottom:4px">Risk levels</div><div class="li"><div class="ls" style="background:var(--bd)"></div>Critical (≥ 15)</div><div class="li"><div class="ls" style="background:var(--bw)"></div>High (10–14)</div><div class="li"><div class="ls" style="background:var(--bi)"></div>Medium (6–9)</div><div class="li"><div class="ls" style="background:var(--bg)"></div>Low (1–5)</div></div></div><div class="frow"><span>Filter:</span>${['all','critical','high','medium','low'].map(f=>`<button class="fbtn${riskFilter===f?' on':''}" onclick="setRiskFilter('${f}')">${f==='all'?'All risks':bl(f)}</button>`).join('')}</div><div class="twrap"><table><thead><tr><th>ID</th><th>Threat</th><th>Category</th><th style="text-align:center" title="Likelihood">L</th><th style="text-align:center" title="Impact">I</th><th style="text-align:center">Score</th><th>Level</th><th>Mitigation strategy</th><th>Owner</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function setRiskFilter(f){riskFilter=f;renderRisk()}
+
+function renderTreatment(){
+  const mitigated=TREATMENTS.filter(r=>r.rLevel!==r.level).length;
+  const avgDrop=Math.round(TREATMENTS.reduce((a,r)=>a+(r.score-r.residual),0)/TREATMENTS.length);
+  const stratBadge=s=>s.includes('Transfer')?'<span class="badge b-tr">'+s+'</span>':s.includes('Accept')?'<span class="badge b-ac">'+s+'</span>':'<span class="badge b-mit">'+s+'</span>';
+  const effBadge=e=>e==='High'?'<span class="badge b-ok">High</span>':e==='Medium'?'<span class="badge b-pt">Medium</span>':'<span class="badge b-nc">Low</span>';
+  const rows=TREATMENTS.map(r=>`<tr><td style="font-family:var(--fm);font-size:10px;color:var(--ts)">${r.id}</td><td style="font-weight:500;min-width:130px">${r.threat}</td><td style="text-align:center">${r.score}</td><td><span class="badge ${bc(r.level)}">${bl(r.level)}</span></td><td style="min-width:120px">${stratBadge(r.strategy)}</td><td>${effBadge(r.eff)}</td><td style="text-align:center;font-weight:500">${r.residual}</td><td><span class="badge ${bc(r.rLevel)}">${bl(r.rLevel)}</span></td><td style="font-size:11px;color:var(--tg);font-weight:500">−${r.score-r.residual} pts</td><td style="color:var(--ts);font-size:11px;min-width:180px">${r.controls}</td><td style="color:var(--ts);font-size:11px">${r.review}</td></tr>`).join('');
+  document.getElementById('sub-risk-treat').innerHTML=`<div class="sec-title">Risk treatment register</div><div class="sec-sub">Treatment strategy, controls applied, effectiveness, and residual risk for all 12 identified threats</div><div class="mgrid"><div class="mcard"><div class="mlb">Risks tracked</div><div class="mvl">12</div></div><div class="mcard"><div class="mlb">Level reduced</div><div class="mvl ok">${mitigated}</div></div><div class="mcard"><div class="mlb">Avg score reduction</div><div class="mvl ok">−${avgDrop} pts</div></div><div class="mcard"><div class="mlb">Residual critical</div><div class="mvl cr">0</div></div></div><div style="font-size:11px;color:var(--tt);margin-bottom:1rem">Strategies: <span style="color:var(--ti)">Mitigate</span> = implement controls &nbsp;|&nbsp; <span style="color:var(--tw)">Transfer</span> = insurance/outsource &nbsp;|&nbsp; <span style="color:var(--ts)">Accept</span> = formally acknowledge residual risk</div><div class="twrap"><table><thead><tr><th>ID</th><th>Threat</th><th style="text-align:center">Score</th><th>Level</th><th>Strategy</th><th>Effectiveness</th><th style="text-align:center">Residual</th><th>Residual level</th><th>Reduction</th><th>Key controls</th><th>Review</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COMPLIANCE AUDIT
+// ═══════════════════════════════════════════════════════════════
+function buildAuditDoms(domList,org,openSet,toggleFn){
+  return domList.map(d=>{
+    const p=domPct(d,org),isOpen=openSet.has(d.id);
+    const fc=pfc(p);
+    const ctrlHTML=d.controls.map(c=>`<div class="ctrl"><div class="cid">${c.id}</div><div style="flex:1"><div class="cname">${c.name}</div><div class="cfind">${c[fk(org)]}</div></div><div class="cstat">${sbadge(c[ok(org)])}</div></div>`).join('');
+    return`<div class="dom"><div class="dhdr" onclick="${toggleFn}('${d.id}')"><div class="dname">${d.id} — ${d.name}</div><div class="dpg"><div class="dpbar"><div class="dpfil" style="width:${p}%;background:${fc}"></div></div><div class="dppct">${p}%</div><i class="ti ti-chevron-${isOpen?'up':'down'}" style="font-size:13px;color:var(--ts)"></i></div></div><div class="dbody${isOpen?' open':''}">${ctrlHTML}</div></div>`;
+  }).join('');
+}
+
+function renderAuditMain(){
+  const score=totalPct(DOMAINS,auditOrg);const fc=pfc(score);const totalCtrl=DOMAINS.reduce((a,d)=>a+d.controls.length,0);
+  document.getElementById('sub-audit-main').innerHTML=`<div class="sec-title">ISO 27001 compliance audit</div><div class="sec-sub">Mock audit against ISO/IEC 27001:2013 Annex A — 7 primary control domains, ${totalCtrl} controls</div><div class="orgrow"><label>Organization:</label><select onchange="switchAuditOrg(this.value)"><option value="techcorp"${auditOrg==='techcorp'?' selected':''}>TechCorp Ltd</option><option value="health"${auditOrg==='health'?' selected':''}>HealthFirst Inc</option></select></div><div class="swrap"><div class="shdr"><div><div class="spct" style="color:${fc}">${score}%</div><div style="font-size:12px;color:var(--ts)">${auditOrg==='techcorp'?'TechCorp Ltd':'HealthFirst Inc'} — compliance score (7 domains)</div></div><div style="text-align:right;max-width:260px"><div style="font-size:12px;color:${fc};font-weight:500">${score>=80?'Largely compliant':score>=50?'Partially compliant — gaps identified':'Non-compliant — immediate remediation required'}</div></div></div><div class="ptrack" style="height:9px"><div class="pfill" style="width:${score}%;background:${fc}"></div></div></div><div style="font-size:11px;color:var(--tt);margin-bottom:1rem">Click a domain header to expand controls and audit findings.</div>${buildAuditDoms(DOMAINS,auditOrg,auditOpen,'toggleAudit')}`;
+}
+function switchAuditOrg(v){auditOrg=v;auditOpen.clear();renderAuditMain()}
+function toggleAudit(id){auditOpen.has(id)?auditOpen.delete(id):auditOpen.add(id);renderAuditMain()}
+
+function renderExtDomains(){
+  const score=totalPct(EXT_DOMAINS,extOrg);const fc=pfc(score);const totalCtrl=EXT_DOMAINS.reduce((a,d)=>a+d.controls.length,0);
+  document.getElementById('sub-audit-ext').innerHTML=`<div class="sec-title">Extended ISO 27001 domains (A.10 – A.18)</div><div class="sec-sub">7 additional Annex A domains — ${totalCtrl} controls — completing the full ISO 27001:2013 assessment</div><div class="orgrow"><label>Organization:</label><select onchange="switchExtOrg(this.value)"><option value="techcorp"${extOrg==='techcorp'?' selected':''}>TechCorp Ltd</option><option value="health"${extOrg==='health'?' selected':''}>HealthFirst Inc</option></select></div><div class="swrap"><div class="shdr"><div><div class="spct" style="color:${fc}">${score}%</div><div style="font-size:12px;color:var(--ts)">Extended domains compliance score</div></div></div><div class="ptrack" style="height:9px"><div class="pfill" style="width:${score}%;background:${fc}"></div></div></div>${buildAuditDoms(EXT_DOMAINS,extOrg,extOpen,'toggleExt')}`;
+}
+function switchExtOrg(v){extOrg=v;extOpen.clear();renderExtDomains()}
+function toggleExt(id){extOpen.has(id)?extOpen.delete(id):extOpen.add(id);renderExtDomains()}
+
+function renderSoA(){
+  const totalCtrl=ALL_DOMS.reduce((a,d)=>a+d.controls.length,0);
+  const key=ok(soaOrg);const findKey=fk(soaOrg);
+  const imp=ALL_DOMS.reduce((a,d)=>a+d.controls.filter(c=>c[key]==='compliant').length,0);
+  const part=ALL_DOMS.reduce((a,d)=>a+d.controls.filter(c=>c[key]==='partial').length,0);
+  const ni=ALL_DOMS.reduce((a,d)=>a+d.controls.filter(c=>c[key]==='non-compliant').length,0);
+  let t=0,s=0;ALL_DOMS.forEach(d=>d.controls.forEach(c=>{const v=c[key];if(v&&v!=='na'){t++;s+=(v==='compliant'?1:v==='partial'?.5:0)}}));
+  const score=t?Math.round((s/t)*100):0;const fc=pfc(score);
+  const domHTML=ALL_DOMS.map(d=>{
+    const p=domPct(d,soaOrg);const isOpen=soaOpen.has(d.id);
+    const ctrlHTML=d.controls.map(c=>{
+      const v=c[key];
+      const status=v==='compliant'?'implemented':v==='non-compliant'?'not-implemented':v==='partial'?'partial':'not-implemented';
+      if(soaFilter!=='all'&&status!==soaFilter)return'';
+      return`<div class="ctrl"><div class="cid">${c.id}</div><div style="flex:1"><div class="cname">${c.name}</div><div class="cfind">${c[findKey]||''}</div></div><div class="cstat">${stbadge(status)}</div></div>`;
+    }).join('');
+    if(!ctrlHTML.trim())return'';
+    return`<div class="dom"><div class="dhdr" onclick="toggleSoA('${d.id}')"><div class="dname">${d.id} — ${d.name}</div><div class="dpg"><div class="dpbar"><div class="dpfil" style="width:${p}%;background:${pfc(p)}"></div></div><div class="dppct">${p}%</div><i class="ti ti-chevron-${isOpen?'up':'down'}" style="font-size:13px;color:var(--ts)"></i></div></div><div class="dbody${isOpen?' open':''}">${ctrlHTML}</div></div>`;
+  }).join('');
+  document.getElementById('sub-audit-soa').innerHTML=`<div class="sec-title">Statement of applicability (SoA)</div><div class="sec-sub">ISO/IEC 27001:2013 — all 14 Annex A domains, ${totalCtrl} controls — mandatory document for ISMS certification</div><div class="orgrow"><label>Organization:</label><select onchange="switchSoAOrg(this.value)"><option value="techcorp"${soaOrg==='techcorp'?' selected':''}>TechCorp Ltd</option><option value="health"${soaOrg==='health'?' selected':''}>HealthFirst Inc</option></select></div><div class="mgrid"><div class="mcard"><div class="mlb">Implemented</div><div class="mvl ok">${imp}</div></div><div class="mcard"><div class="mlb">Partial</div><div class="mvl hi">${part}</div></div><div class="mcard"><div class="mlb">Not implemented</div><div class="mvl cr">${ni}</div></div><div class="mcard"><div class="mlb">SoA score</div><div class="mvl" style="color:${fc}">${score}%</div></div></div><div class="frow"><span>Filter:</span>${[['all','All controls'],['implemented','Implemented'],['partial','Partial'],['not-implemented','Not implemented']].map(([v,l])=>`<button class="fbtn${soaFilter===v?' on':''}" onclick="setSoAFilter('${v}')">${l}</button>`).join('')}</div>${domHTML}`;
+}
+function switchSoAOrg(v){soaOrg=v;soaOpen.clear();renderSoA()}
+function toggleSoA(id){soaOpen.has(id)?soaOpen.delete(id):soaOpen.add(id);renderSoA()}
+function setSoAFilter(v){soaFilter=v;renderSoA()}
+
+function renderGapAnalysis(){
+  const filtered=gapFilter==='all'?GAPS:GAPS.filter(g=>g.pri===parseInt(gapFilter));
+  const p1=GAPS.filter(g=>g.pri===1).length,p2=GAPS.filter(g=>g.pri===2).length,p3=GAPS.filter(g=>g.pri===3).length,p4=GAPS.filter(g=>g.pri===4).length;
+  const srcB=s=>s==='Risk'?'<span class="badge b-risk">Risk</span>':s==='Audit'?'<span class="badge b-audit">Audit</span>':'<span class="badge b-both">Both</span>';
+  const efB=e=>e==='L'?'<span class="badge b-ok">Low</span>':e==='M'?'<span class="badge b-pt">Medium</span>':'<span class="badge b-nc">High</span>';
+  const priB=p=>`<span class="badge ${p===1?'b-c':p===2?'b-h':p===3?'b-m':'b-l'}">P${p}</span>`;
+  const rows=filtered.map(g=>`<tr><td>${priB(g.pri)}</td><td style="min-width:220px">${g.finding}</td><td>${srcB(g.source)}</td><td style="color:var(--ts)">${g.cat}</td><td>${efB(g.effort)}</td><td style="color:var(--ts)">${g.owner}</td><td style="color:var(--ts)">${g.target}</td></tr>`).join('');
+  document.getElementById('sub-audit-gap').innerHTML=`<div class="sec-title">Gap analysis & remediation tracker</div><div class="sec-sub">${GAPS.length} prioritized items from the risk register and ISO audit — filter by priority tier</div><div class="mgrid"><div class="mcard"><div class="mlb">P1 — critical</div><div class="mvl cr">${p1}</div></div><div class="mcard"><div class="mlb">P2 — high</div><div class="mvl hi">${p2}</div></div><div class="mcard"><div class="mlb">P3 — medium</div><div class="mvl in">${p3}</div></div><div class="mcard"><div class="mlb">P4 — ongoing</div><div class="mvl">${p4}</div></div></div><div class="frow"><span>Priority:</span>${[['all','All'],['1','P1 Critical'],['2','P2 High'],['3','P3 Medium'],['4','P4 Ongoing']].map(([v,l])=>`<button class="fbtn${gapFilter===v?' on':''}" onclick="setGapFilter('${v}')">${l}</button>`).join('')}</div><div style="font-size:11px;color:var(--tt);margin-bottom:1rem">P1 = within 30 days · P2 = within 60 days · P3 = within 90 days · P4 = continuous improvement</div><div class="twrap"><table><thead><tr><th>Priority</th><th>Remediation action</th><th>Source</th><th>Category</th><th>Effort</th><th>Owner</th><th>Target</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function setGapFilter(v){gapFilter=v;renderGapAnalysis()}
+
+// ═══════════════════════════════════════════════════════════════
+// GOVERNANCE
+// ═══════════════════════════════════════════════════════════════
+function renderSlide(){
+  const s=SLIDES[slideIdx];
+  document.getElementById('sub-gov-slides').innerHTML=`<div class="sec-title">Governance strategy presentation</div><div class="sec-sub">6-slide board-ready presentation — use navigation controls or dot indicators</div><div class="snav"><div class="sdots">${SLIDES.map((_,i)=>`<div class="sdot${i===slideIdx?' on':''}" onclick="goSlide(${i})"></div>`).join('')}</div><div class="sbtns"><button class="sbtn" onclick="goSlide(${slideIdx-1})"${slideIdx===0?' disabled':''}>← Prev</button><button class="sbtn" onclick="goSlide(${slideIdx+1})"${slideIdx===SLIDES.length-1?' disabled':''}>Next →</button></div></div><div class="sarea"><div class="stag">Slide ${slideIdx+1} of ${SLIDES.length} · ${s.tag}</div><div class="stitle">${s.title}</div><div class="sbody">${s.body}</div></div><div style="text-align:center;margin-top:.625rem;font-size:11px;color:var(--tt)">${slideIdx+1} / ${SLIDES.length}</div>`;
+}
+function goSlide(i){if(i>=0&&i<SLIDES.length){slideIdx=i;renderSlide()}}
+
+function renderPolicies(){
+  const cards=POLICIES.map(p=>{
+    const isOpen=polOpen.has(p.id);
+    return`<div class="pol-card"><div class="pol-hdr" onclick="togglePol('${p.id}')"><i class="ti ${p.icon}" style="font-size:18px;color:var(--ts)"></i><div class="pol-name">${p.name.charAt(0).toUpperCase()+p.name.slice(1)}</div><i class="ti ti-chevron-${isOpen?'up':'down'}" style="font-size:14px;color:var(--ts)"></i></div>${isOpen?`<div class="pol-body open"><div class="pol-section"><div class="pol-label">Purpose</div><div class="pol-text">${p.purpose}</div></div><div class="pol-section"><div class="pol-label">Scope</div><div class="pol-text">${p.scope}</div></div><div class="pol-section"><div class="pol-label">Policy statements</div><ul class="pol-list">${p.statements.map(s=>`<li>${s}</li>`).join('')}</ul></div><div class="pol-section"><div class="pol-label">Roles & responsibilities</div><div class="pol-text">${p.roles}</div></div><div class="pol-section"><div class="pol-label">Review cycle</div><div class="pol-text">${p.review}</div></div></div>`:'<div class="pol-body"></div>'}</div>`;
+  }).join('');
+  document.getElementById('sub-gov-policy').innerHTML=`<div class="sec-title">Cybersecurity policy templates</div><div class="sec-sub">Six full policy documents — click to expand; includes purpose, scope, statements, roles, and review cycle</div><div style="display:flex;gap:8px;margin-bottom:1.25rem"><button onclick="polOpen=new Set(POLICIES.map(p=>p.id));renderPolicies()" class="fbtn">Expand all</button><button onclick="polOpen.clear();renderPolicies()" class="fbtn">Collapse all</button></div>${cards}`;
+}
+function togglePol(id){polOpen.has(id)?polOpen.delete(id):polOpen.add(id);renderPolicies()}
+
+// ═══════════════════════════════════════════════════════════════
+// ANALYTICS & DASHBOARD
+// ═══════════════════════════════════════════════════════════════
+function renderDashboard(){
+  const tcAvg=Math.round([100,83,83,83,100,100,83].reduce((a,b)=>a+b,0)/7);
+  const hfAvg=Math.round([25,50,50,50,75,50,50].reduce((a,b)=>a+b,0)/7);
+  const p1Actions=['Deploy MFA across all user accounts — RSK-001 score 20 · IAM Team · Q1 2025','Implement EDR and verify offline backup restoration — RSK-002 score 15 · IT Security · Q1 2025','Establish vulnerability scanning — critical gap HealthFirst (A.12.6.1) · IT Ops · Q1 2025','Formalize IS policy and obtain board approval · CISO · Q1 2025','Create formal offboarding process; revoke ex-employee accounts (A.7.3.1) · HR/IT · Q1 2025','Define data transfer policy; block consumer file-sharing · IT Security · Q1 2025'];
+  document.getElementById('sub-analytics-dash').innerHTML=`<div class="sec-title">Executive GRC dashboard</div><div class="sec-sub">Consolidated view across risk register, ISO 27001 audit, and governance strategy — Q1 2025</div><div class="mgrid"><div class="mcard"><div class="mlb">Total risks tracked</div><div class="mvl">12</div></div><div class="mcard"><div class="mlb">Critical risks</div><div class="mvl cr">2</div></div><div class="mcard"><div class="mlb">TechCorp compliance</div><div class="mvl ok">${tcAvg}%</div></div><div class="mcard"><div class="mlb">HealthFirst compliance</div><div class="mvl hi">${hfAvg}%</div></div></div><div class="cgrid"><div class="cbox"><div class="ct">ISO 27001 compliance by domain</div><div class="cleg"><span class="cli"><span class="csq" style="background:#1D9E75"></span>TechCorp Ltd — avg ${tcAvg}%</span><span class="cli"><span class="csq" style="background:#BA7517"></span>HealthFirst Inc — avg ${hfAvg}%</span></div><div style="position:relative;height:220px"><canvas id="dash-bar-chart" aria-label="Grouped bar chart comparing ISO 27001 compliance between TechCorp and HealthFirst across 7 domains"></canvas></div></div><div class="cbox"><div class="ct">Risk level distribution</div><div class="cleg" style="flex-direction:column;gap:5px"><span class="cli"><span class="csq" style="background:#E24B4A"></span>Critical — 2</span><span class="cli"><span class="csq" style="background:#BA7517"></span>High — 7</span><span class="cli"><span class="csq" style="background:#378ADD"></span>Medium — 3</span><span class="cli"><span class="csq" style="background:#1D9E75"></span>Low — 0</span></div><div style="position:relative;height:180px"><canvas id="dash-donut-chart" aria-label="Donut chart: 2 critical, 7 high, 3 medium, 0 low risks"></canvas></div></div></div><div class="sec-title" style="margin-bottom:.5rem">P1 priority actions — address within 30 days</div><div class="actions-list">${p1Actions.map((a,i)=>`<div class="action-item"><div class="action-num">${i+1}</div><div><div style="font-size:12px;color:var(--tp);line-height:1.5">${a.split('·')[0]}</div><div class="action-meta">${a.split('·').slice(1).join('·')}</div></div></div>`).join('')}</div>`;
+  setTimeout(()=>{
+    const tc=isDark()?'#B4B2A9':'#888780',gc=isDark()?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.06)';
+    if(chartDash1)chartDash1.destroy();if(chartDash2)chartDash2.destroy();
+    const bc=document.getElementById('dash-bar-chart');
+    if(bc&&window.Chart)chartDash1=new Chart(bc,{type:'bar',data:{labels:['A.5','A.6','A.7','A.8','A.9','A.12','A.16'],datasets:[{label:'TechCorp Ltd',data:[100,83,83,83,100,100,83],backgroundColor:'#1D9E75',borderRadius:3,borderWidth:0},{label:'HealthFirst Inc',data:[25,50,50,50,75,50,50],backgroundColor:'#BA7517',borderRadius:3,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y}%`}}},scales:{x:{grid:{color:gc},ticks:{color:tc,font:{size:10}}},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc,font:{size:11},callback:v=>v+'%'}}}}});
+    const dc=document.getElementById('dash-donut-chart');
+    if(dc&&window.Chart)chartDash2=new Chart(dc,{type:'doughnut',data:{labels:['Critical','High','Medium','Low'],datasets:[{data:[2,7,3,0],backgroundColor:['#E24B4A','#BA7517','#378ADD','#1D9E75'],borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false}}}});
+  },0);
+}
+
+function renderRiskAnalytics(){
+  const colMap={critical:'#E24B4A',high:'#BA7517',medium:'#378ADD',low:'#1D9E75'};
+  const sorted=[...RISKS].map(r=>({...r,score:r.l*r.i,level:rl(r.l*r.i)})).sort((a,b)=>b.score-a.score);
+  const rows=sorted.map(r=>`<tr><td style="font-weight:500">${r.threat}</td><td style="text-align:center;font-weight:500">${r.score}</td><td><span class="badge ${bc(r.level)}">${bl(r.level)}</span></td><td style="min-width:120px"><div style="background:var(--bs);border-radius:3px;height:8px;overflow:hidden"><div style="width:${Math.round((r.score/25)*100)}%;height:100%;border-radius:3px;background:${colMap[r.level]}"></div></div></td></tr>`).join('');
+  document.getElementById('sub-analytics-charts').innerHTML=`<div class="sec-title">Risk analytics</div><div class="sec-sub">Visual breakdown of the 12-item risk register — scores, distribution, and category exposure</div><div class="mgrid"><div class="mcard"><div class="mlb">Total risks</div><div class="mvl">12</div></div><div class="mcard"><div class="mlb">Critical</div><div class="mvl cr">2</div></div><div class="mcard"><div class="mlb">High</div><div class="mvl hi">7</div></div><div class="mcard"><div class="mlb">Medium</div><div class="mvl in">3</div></div></div><div class="cgrid"><div class="cbox"><div class="ct">Risk score by threat (sorted)</div><div class="cleg"><span class="cli"><span class="csq" style="background:#E24B4A"></span>Critical (≥15)</span><span class="cli"><span class="csq" style="background:#BA7517"></span>High (10–14)</span><span class="cli"><span class="csq" style="background:#378ADD"></span>Medium (6–9)</span></div><div style="position:relative;height:480px"><canvas id="risk-bar-chart" aria-label="Horizontal bar chart: 12 threats sorted by risk score descending"></canvas></div></div><div class="cbox"><div class="ct">Risk level breakdown</div><div class="cleg" style="flex-direction:column;gap:5px"><span class="cli"><span class="csq" style="background:#E24B4A"></span>Critical — 2 risks</span><span class="cli"><span class="csq" style="background:#BA7517"></span>High — 7 risks</span><span class="cli"><span class="csq" style="background:#378ADD"></span>Medium — 3 risks</span><span class="cli"><span class="csq" style="background:#1D9E75"></span>Low — 0 risks</span></div><div style="position:relative;height:240px"><canvas id="risk-donut-chart" aria-label="Donut chart risk levels"></canvas></div><div class="twrap" style="margin-top:1rem"><table><thead><tr><th>Threat</th><th style="text-align:center">Score</th><th>Level</th><th>Exposure</th></tr></thead><tbody>${rows}</tbody></table></div></div></div>`;
+  setTimeout(()=>{
+    const tc=isDark()?'#B4B2A9':'#888780',gc=isDark()?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.06)';
+    if(chartBar)chartBar.destroy();if(chartDonut)chartDonut.destroy();
+    const rbc=document.getElementById('risk-bar-chart');
+    if(rbc&&window.Chart)chartBar=new Chart(rbc,{type:'bar',data:{labels:sorted.map(r=>r.threat.length>20?r.threat.slice(0,18)+'…':r.threat),datasets:[{data:sorted.map(r=>r.score),backgroundColor:sorted.map(r=>colMap[r.level]),borderWidth:0,borderRadius:3}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`Risk score: ${ctx.parsed.x} / 25`}}},scales:{x:{max:25,grid:{color:gc},ticks:{color:tc,font:{size:11}}},y:{grid:{display:false},ticks:{color:tc,font:{size:11}}}}}});
+    const rdc=document.getElementById('risk-donut-chart');
+    if(rdc&&window.Chart)chartDonut=new Chart(rdc,{type:'doughnut',data:{labels:['Critical','High','Medium','Low'],datasets:[{data:[2,7,3,0],backgroundColor:['#E24B4A','#BA7517','#378ADD','#1D9E75'],borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false}}}});
+  },0);
+}
+
+function renderKPI(){
+  const on=METRICS.filter(m=>m.status==='on-track').length,ar=METRICS.filter(m=>m.status==='at-risk').length,of=METRICS.filter(m=>m.status==='off-track').length;
+  const cards=METRICS.map(m=>{
+    const fc=m.score>=90?'#1D9E75':m.score>=70?'#BA7517':'#E24B4A';
+    const stB=m.status==='on-track'?'<span class="badge b-on">On track</span>':m.status==='at-risk'?'<span class="badge b-ar">At risk</span>':'<span class="badge b-of">Off track</span>';
+    return`<div class="kpi-card"><div class="kpi-top"><div class="kpi-val">${m.current}</div>${stB}</div><div class="kpi-name">${m.name}</div><div class="kpi-target">Target: ${m.target}</div><div class="kpi-bar" style="height:6px"><div class="pfill" style="width:${m.score}%;background:${fc};height:100%"></div></div><div style="font-size:10px;color:var(--tt);margin-top:.375rem">${m.trendText}</div></div>`;
+  }).join('');
+  document.getElementById('sub-analytics-kpi').innerHTML=`<div class="sec-title">Security metrics — TechCorp Ltd</div><div class="sec-sub">Six core KPIs tracked quarterly and reported to executive leadership</div><div class="mgrid"><div class="mcard"><div class="mlb">KPIs tracked</div><div class="mvl">${METRICS.length}</div></div><div class="mcard"><div class="mlb">On track</div><div class="mvl ok">${on}</div></div><div class="mcard"><div class="mlb">At risk</div><div class="mvl hi">${ar}</div></div><div class="mcard"><div class="mlb">Off track</div><div class="mvl cr">${of}</div></div></div><div class="kpi-grid">${cards}</div><div style="border:0.5px solid var(--bd3);border-radius:var(--r8);padding:1rem;margin-top:1rem"><div style="font-size:12px;font-weight:500;color:var(--tp);margin-bottom:.5rem">Q1 2025 management commentary</div><div style="font-size:12px;color:var(--ts);line-height:1.7">MTTD and phishing click-through rate remain the two KPIs furthest from target. The SOC tuning exercise in Q2 is expected to reduce MTTD below 4 hours. Monthly phishing simulations will drive the click rate below 5% by Q3. Patch compliance improved +6pp vs Q4 2024 following the new automated pipeline. All P1 items from the ISO audit have been assigned owners with Q1 delivery commitments.</div></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// OPERATIONS
+// ═══════════════════════════════════════════════════════════════
+function renderIR(){
+  const sevCards=[['P1','Critical','Active breach, ransomware, data exfiltration','15 min','CISO + Legal + Exec + Insurance'],['P2','High','Unauthorized access, significant malware, partial outage','1 hour','CISO + IT Security Lead'],['P3','Medium','Suspicious activity, policy violation, minor impact','4 hours','IT Security Lead'],['P4','Low','Lost device, AUP violation, security query','24 hours','IT Security Team']].map(([p,l,c,r,e])=>`<div class="sev-card"><div class="sev-top"><span class="badge b-${p.toLowerCase()==='p1'?'c':p.toLowerCase()==='p2'?'h':p.toLowerCase()==='p3'?'m':'l'}">${p}</span><span style="font-size:12px;font-weight:500;color:var(--tp)">${l}</span></div><div class="sev-row"><strong>Criteria:</strong> ${c}</div><div class="sev-row"><strong>Response SLA:</strong> ${r}</div><div class="sev-row"><strong>Escalate to:</strong> ${e}</div></div>`).join('');
+  const scenHTML=SCENARIOS.map(s=>{
+    const isOpen=irOpen.has(s.id);
+    const sevCls=s.sev==='P1'?'b-c':'b-h';
+    return`<div class="scen"><div class="scen-hdr" onclick="toggleIR('${s.id}')"><i class="ti ${s.icon}" style="font-size:18px;color:var(--ts)"></i><div class="scen-title">${s.title}</div><span class="badge ${sevCls}">${s.sev}</span><i class="ti ti-chevron-${isOpen?'up':'down'}" style="font-size:13px;color:var(--ts);margin-left:4px"></i></div>${isOpen?`<div class="scen-body open"><div class="scen-label">Indicators of compromise</div><ul class="scen-steps">${s.indicators.map(i=>`<li>${i}</li>`).join('')}</ul><div class="scen-label">Immediate actions — first 30 minutes</div><ul class="scen-steps">${s.immediate.map(i=>`<li>${i}</li>`).join('')}</ul><div class="scen-label">Containment</div><ul class="scen-steps">${s.contain.map(i=>`<li>${i}</li>`).join('')}</ul><div class="scen-label">Eradication</div><ul class="scen-steps">${s.eradicate.map(i=>`<li>${i}</li>`).join('')}</ul><div class="scen-label">Recovery</div><ul class="scen-steps">${s.recover.map(i=>`<li>${i}</li>`).join('')}</ul><div class="scen-label">Notification chain</div><div style="font-size:12px;color:var(--ts);line-height:1.6">${s.notify}</div></div>`:`<div class="scen-body"></div>`}</div>`;
+  }).join('');
+  document.getElementById('sub-ops-ir').innerHTML=`<div class="sec-title">Incident response playbook</div><div class="sec-sub">Step-by-step procedures for 4 scenarios — aligned to NIST SP 800-61r2 IR lifecycle</div><div class="sev-grid">${sevCards}</div><div style="font-size:13px;font-weight:500;color:var(--tp);margin-bottom:.75rem">IR process phases</div><div class="phases">${[['1','Identify','0–1 hr'],['2','Contain','1–4 hrs'],['3','Eradicate','4–24 hrs'],['4','Recover','24–72 hrs'],['5','Learn','Post-incident']].map(([n,nm,t])=>`<div class="phase"><div class="phase-num">${n}</div><div class="phase-name">${nm}</div><div class="phase-time">${t}</div></div>`).join('')}</div><div style="font-size:13px;font-weight:500;color:var(--tp);margin-bottom:.5rem">Scenario playbooks</div><div style="font-size:11px;color:var(--tt);margin-bottom:1rem">Click a scenario to expand the full step-by-step response procedure</div>${scenHTML}`;
+}
+function toggleIR(id){irOpen.has(id)?irOpen.delete(id):irOpen.add(id);renderIR()}
+
+function renderTraining(){
+  const mandatory=TRAINING.filter(t=>t.mandatory).length;const completed=TRAINING.filter(t=>t.completion!==null).length;
+  const rows=TRAINING.map(t=>{
+    const qCells=[1,2,3,4].map(q=>t.q.includes(q)?`<td style="text-align:center"><span class="${t.name.includes('Phishing')?'tc-q':'tc-active'}">${t.name.includes('Phishing')?'Sim':'Run'}</span></td>`:`<td style="text-align:center"><span class="tc-empty"></span></td>`).join('');
+    const compCell=t.completion!==null?`<td><div style="display:flex;align-items:center;gap:6px"><div style="flex:1;background:var(--bs);border-radius:3px;height:5px;overflow:hidden;min-width:50px"><div style="width:${t.completion}%;height:100%;border-radius:3px;background:${t.completion>=90?'#1D9E75':'#BA7517'}"></div></div><span style="font-size:11px;color:var(--ts)">${t.completion}%</span></div></td>`:`<td style="font-size:11px;color:var(--tt)">Q4 — upcoming</td>`;
+    return`<tr><td style="font-weight:500;min-width:180px">${t.name}</td><td style="color:var(--ts);font-size:11px">${t.audience}</td><td style="color:var(--ts)">${t.duration}</td><td style="color:var(--ts)">${t.method}</td>${qCells}<td style="text-align:center">${t.mandatory?'<span class="badge b-c">Mandatory</span>':'<span class="badge b-na">Optional</span>'}</td>${compCell}</tr>`;
+  }).join('');
+  document.getElementById('sub-ops-train').innerHTML=`<div class="sec-title">Security awareness training program</div><div class="sec-sub">Annual training calendar — ISO 27001 A.7.2.2 and NIST SP 800-50 aligned — 2025 delivery plan</div><div class="mgrid"><div class="mcard"><div class="mlb">Total modules</div><div class="mvl">${TRAINING.length}</div></div><div class="mcard"><div class="mlb">Mandatory</div><div class="mvl cr">${mandatory}</div></div><div class="mcard"><div class="mlb">Completed (Q1–Q3)</div><div class="mvl ok">${completed}</div></div><div class="mcard"><div class="mlb">Phishing sims / yr</div><div class="mvl">4</div></div></div><div class="twrap"><table><thead><tr><th>Training module</th><th>Audience</th><th>Duration</th><th>Delivery</th><th style="text-align:center">Q1</th><th style="text-align:center">Q2</th><th style="text-align:center">Q3</th><th style="text-align:center">Q4</th><th>Type</th><th style="min-width:120px">Completion</th></tr></thead><tbody>${rows}</tbody></table></div><div style="border:0.5px solid var(--bd3);border-radius:var(--r6);padding:1rem;margin-top:1.25rem"><div style="font-size:12px;font-weight:500;color:var(--tp);margin-bottom:.5rem">Phishing simulation results — 2025</div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px">${[['Q1','8.3%','#BA7517'],['Q2','6.1%','#BA7517'],['Q3','5.4%','#BA7517'],['Q4','Pending','var(--tt)']].map(([q,v,c])=>`<div style="background:var(--bs);border-radius:var(--r6);padding:10px"><div style="font-size:10px;color:var(--tt);margin-bottom:3px">${q} simulation</div><div style="font-size:18px;font-weight:500;color:${c}">${v}</div><div style="font-size:11px;color:var(--ts)">click rate</div></div>`).join('')}</div><div style="font-size:11px;color:var(--tt);margin-top:.75rem">Target: &lt; 5% click-through rate. Trend improving quarter-over-quarter.</div></div>`;
+}
+
+function renderVRA(){
+  const cats=[...new Set(VRA_Q.map(q=>q.cat))];
+  const catHTML=cats.map(cat=>{
+    const qs=VRA_Q.filter(q=>q.cat===cat);
+    return`<div class="vra-cat">${cat}</div>${qs.map(q=>`<div class="vra-row"><div class="vra-q">${q.q}</div><div class="vra-btns"><button id="vra-${q.id}-yes" class="vra-btn" onclick="setVRA('${q.id}','yes')">Yes</button><button id="vra-${q.id}-partial" class="vra-btn" onclick="setVRA('${q.id}','partial')">Partial</button><button id="vra-${q.id}-no" class="vra-btn" onclick="setVRA('${q.id}','no')">No</button><button id="vra-${q.id}-na" class="vra-btn" onclick="setVRA('${q.id}','na')">N/A</button></div></div>`).join('')}`;
+  }).join('');
+  document.getElementById('sub-ops-vra').innerHTML=`<div class="sec-title">Vendor risk assessment questionnaire</div><div class="sec-sub">${VRA_Q.length}-question security assessment across 6 domains — click Yes/Partial/No/N/A to generate a live risk rating</div><div class="vra-score-box"><div><div id="vra-score" style="font-size:36px;font-weight:500;color:var(--tp)">—</div><div id="vra-rating" style="font-size:14px;font-weight:500;color:var(--ts);margin-bottom:3px">Answer questions to generate a risk rating</div><div id="vra-answered" style="font-size:11px;color:var(--ts)">0 / ${VRA_Q.length} questions answered</div></div><div style="flex:1;min-width:160px"><div style="font-size:11px;color:var(--ts);margin-bottom:5px">Vendor security score</div><div class="ptrack" style="height:12px"><div class="pfill" id="vra-bar" style="width:0%;background:#1D9E75;height:100%"></div></div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tt);margin-top:3px"><span>Critical</span><span>High</span><span>Medium</span><span>Low risk</span></div><div style="font-size:11px;color:var(--tt);margin-top:.625rem">≥90% Low · 70–89% Medium · 50–69% High · &lt;50% Critical risk</div></div></div><div style="font-size:11px;color:var(--tt);margin-bottom:1rem">Scoring: Yes = 4 pts · Partial = 2 pts · No = 0 pts · N/A = excluded from calculation</div>${catHTML}`;
+}
+function setVRA(id,val){
+  vraAnswers[id]=val;
+  ['yes','partial','no','na'].forEach(v=>{const btn=document.getElementById(`vra-${id}-${v}`);if(!btn)return;btn.className='vra-btn';if(v===val)btn.classList.add(v==='yes'?'yes-on':v==='partial'?'part-on':v==='no'?'no-on':'na-on');});
+  let total=0,score=0,answered=0;
+  VRA_Q.forEach(q=>{const a=vraAnswers[q.id];if(a&&a!=='na'){total+=4;score+=(a==='yes'?4:a==='partial'?2:0);answered++;}else if(a==='na')answered++;});
+  const pct=total>0?Math.round((score/total)*100):0;
+  const fc=pct>=90?'#1D9E75':pct>=70?'#BA7517':'#E24B4A';
+  const rating=pct>=90?'Low risk — strong security posture':pct>=70?'Medium risk — some gaps; request remediation plan':pct>=50?'High risk — significant gaps; enhanced due diligence required':'Critical risk — do not onboard without major remediation';
+  const sv=document.getElementById('vra-score'),sr=document.getElementById('vra-rating'),sb=document.getElementById('vra-bar'),sa=document.getElementById('vra-answered');
+  if(sv)sv.textContent=total>0?pct+'%':'—';
+  if(sr){sr.textContent=total>0?rating:'Answer questions to generate a risk rating';sr.style.color=total>0?fc:'var(--ts)';}
+  if(sb){sb.style.width=pct+'%';sb.style.background=fc;}
+  if(sa)sa.textContent=`${answered} / ${VRA_Q.length} questions answered`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AUDIT REPORT
+// ═══════════════════════════════════════════════════════════════
+function renderReport(){
+  const d=REPORT[reportOrg];const fc=pfc(d.compliance);
+  const domLabels=['A.5','A.6','A.7','A.8','A.9','A.10','A.11','A.12','A.13','A.14','A.15','A.16','A.17','A.18'];
+  const hmCells=d.domScores.map(s=>`<div class="hm-cell ${s>=80?'hm-ok':s>=50?'hm-pt':'hm-ni'}">${s}%</div>`).join('');
+  document.getElementById('sub-report-main').innerHTML=`<div class="sec-title">GRC audit report — ${d.name}</div><div class="sec-sub">Formal assessment covering risk register, ISO 27001 compliance, and governance readiness — Q1 2025</div><div class="orgrow"><label>Organization:</label><select onchange="switchRptOrg(this.value)"><option value="techcorp"${reportOrg==='techcorp'?' selected':''}>TechCorp Ltd</option><option value="health"${reportOrg==='health'?' selected':''}>HealthFirst Inc</option></select></div><div class="rpt-section"><div class="rpt-h"><i class="ti ti-info-circle"></i>Report metadata</div><div class="rpt-meta">${[['Organization',d.name],['Industry',d.industry],['Headcount',d.employees],['Assessment period','Q1 2025'],['Framework','ISO 27001:2013'],['Lead assessor','Information Security Team'],['Status','Draft — for management review'],['Next review','Q4 2025']].map(([k,v])=>`<div style="background:var(--bs);border-radius:var(--r6);padding:8px 10px"><div class="rpt-mk">${k}</div><div class="rpt-mv">${v}</div></div>`).join('')}</div></div><div class="rpt-section"><div class="rpt-h"><i class="ti ti-align-left"></i>Executive summary</div><div class="rpt-p">This GRC assessment evaluated ${d.name} across three dimensions: (1) threat risk identification and scoring using a 5×5 likelihood × impact methodology, (2) ISO/IEC 27001:2013 compliance across all 14 Annex A domains, and (3) governance framework alignment including policies, RACI, and roadmap.</div><div class="rpt-p">The risk register identified 12 cyber threats — <strong style="font-weight:500">${d.compliance>=70?2:2} Critical</strong> and 7 High. ISO 27001 compliance: <strong style="font-weight:500;color:${fc}">${d.compliance}%</strong> — ${d.implemented} implemented, ${d.partial} partial, ${d.notImpl} not implemented.</div></div><div class="rpt-section"><div class="rpt-h"><i class="ti ti-table"></i>Compliance heat map — all 14 Annex A domains</div><div style="font-size:11px;color:var(--ts);margin-bottom:.5rem"><span class="badge b-ok" style="font-size:10px">≥80%</span> <span class="badge b-pt" style="font-size:10px">50–79%</span> <span class="badge b-nc" style="font-size:10px">&lt;50%</span></div><div class="hm-grid">${domLabels.map(l=>`<div class="hm-lbl">${l}</div>`).join('')}${hmCells}</div></div><div class="rpt-section"><div class="rpt-h"><i class="ti ti-alert-circle"></i>Key findings</div><ul class="find-list">${d.findings.map(f=>`<li>${f}</li>`).join('')}</ul></div><div class="rpt-section"><div class="rpt-h"><i class="ti ti-list-check"></i>Prioritized recommendations</div>${d.recs.map(r=>`<div class="rec-item"><span class="badge ${r.p==='P1'?'b-c':r.p==='P2'?'b-h':'b-m'}">${r.p}</span><span style="font-size:12px;color:var(--tp);line-height:1.5">${r.t}</span></div>`).join('')}</div><div class="rpt-section"><div class="rpt-h"><i class="ti ti-flag"></i>Conclusion</div><div class="rpt-p">${d.conclusion}</div></div>`;
+}
+function switchRptOrg(v){reportOrg=v;renderReport()}
+
+// ═══════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function switchTab(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('panel-'+id).classList.add('on');
+  btn.classList.add('on');
+}
+
+function switchSub(panelId,subId,btn){
+  const panel=document.getElementById('panel-'+panelId);
+  panel.querySelectorAll('.sub-panel').forEach(p=>p.classList.remove('on'));
+  panel.querySelectorAll('.sub-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('sub-'+panelId+'-'+subId).classList.add('on');
+  btn.classList.add('on');
+  // Lazy render
+  if(panelId==='risk'&&subId==='treat'&&!rendered.treat){renderTreatment();rendered.treat=true;}
+  if(panelId==='audit'&&subId==='ext'&&!rendered.ext){renderExtDomains();rendered.ext=true;}
+  if(panelId==='audit'&&subId==='soa'&&!rendered.soa){renderSoA();rendered.soa=true;}
+  if(panelId==='audit'&&subId==='gap'&&!rendered.gap){renderGapAnalysis();rendered.gap=true;}
+  if(panelId==='gov'&&subId==='policy'&&!rendered.gov){renderPolicies();rendered.gov=true;}
+  if(panelId==='analytics'&&subId==='charts'&&!rendered.charts){renderRiskAnalytics();rendered.charts=true;}
+  if(panelId==='analytics'&&subId==='kpi'&&!rendered.kpi){renderKPI();rendered.kpi=true;}
+  if(panelId==='ops'&&subId==='train'&&!rendered.train){renderTraining();rendered.train=true;}
+  if(panelId==='ops'&&subId==='vra'&&!rendered.vra){renderVRA();rendered.vra=true;}
+}
+
+// Override tab switching to lazy-render analytics dashboard
+const origSwitchTab=switchTab;
+window.switchTab=function(id,btn){
+  origSwitchTab(id,btn);
+  if(id==='analytics'&&!rendered.dash){renderDashboard();rendered.dash=true;}
+  if(id==='ops'&&!rendered.ir){renderIR();rendered.ir=true;}
+  if(id==='report'&&!rendered.report){renderReport();rendered.report=true;}
+};
+
+// ═══════════════════════════════════════════════════════════════
+// INIT — render default panels
+// ═══════════════════════════════════════════════════════════════
+renderRisk();
+renderSlide();
+renderAuditMain();
+renderGapAnalysis();rendered.gap=true;
+</script>
+</body>
+</html>
