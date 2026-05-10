@@ -244,7 +244,7 @@ Update these arrays to tailor the platform to your organization.
 Cybersecurity Analyst | Cloud Developer | GRC Specialist
 
 - 🔗 LinkedIn: [linkedin.com/in/yourprofile]www.linkedin.com/in/malavmehta-dev
-- 💻 GitHub: [github.com/yourusername](https://github.com/malavmehta7101)
+- 💻 GitHub: [github.com/yourusername]https://github.com/malavmehta7101
 - 📧 Email: malav.mehta@rocketmail.com/mehtamalav59@gmail.com
 
 ---
